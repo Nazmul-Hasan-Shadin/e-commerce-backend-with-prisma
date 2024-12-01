@@ -24,6 +24,61 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  shop Shop?
+
+}
+
+
+model Shop {
+  id          String      @id  @default(uuid())
+  vendorId    String      @unique
+  name        String
+  logoUrl     String?
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  vendor      User @relation(fields: [vendorId], references: [id])
+  product Product[]
+
+}
+
+
+model Product {
+  id              String      @id @default(uuid())
+  shopId          String
+  name            String
+  description     String?
+  price           Float
+  categoryId        String
+  inventoryCount  Int      @default(0)
+  discount        Float    @default(0.0) 
+  images          String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  shop             Shop  @relation(fields: [shopId], references: [id])
+
+
+  category    Category   @relation(fields: [categoryId], references: [id])
+  // Reviews         ProductReview[]
+  // OrderItems      OrderItem[]
+  // CartItems       CartItem[]
+}
+
+
+model Category {
+  id          String     @id @default(uuid())
+  name        String     @unique
+  description String?    // Optional description for the category
+  // parentId    String?    // For nested categories (if needed)
+  // parent      Category?  @relation("CategoryParent", fields: [parentId], references: [id])
+  // children    Category[] @relation("CategoryParent")
+  products    Product[]
+
+  
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  
 }
 
 
