@@ -20,6 +20,7 @@ model User {
   email     String   @unique
   password  String
   role      Role
+  status UserStatus @default(active)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -37,6 +38,10 @@ enum Role {
   user
 }
 
+enum UserStatus {
+  block
+  active
+}
 enum PaymentStatus {
   pending
   completed

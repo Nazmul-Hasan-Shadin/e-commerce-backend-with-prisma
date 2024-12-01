@@ -1,5 +1,6 @@
 import catchAsync from "../../../utils/catchAsync";
 import sendResponse from "../../../utils/sendResponse";
+import { AuthServices } from "../Auth/auth.services";
 import { UserServices } from "./user.services";
 
 const createUserIntoDb = catchAsync(async (req, res) => {
@@ -14,6 +15,8 @@ const createUserIntoDb = catchAsync(async (req, res) => {
 });
 
 
-export const UserController={
-    createUserIntoDb
-}
+
+export const UserController = {
+  createUserIntoDb,
+
+};
