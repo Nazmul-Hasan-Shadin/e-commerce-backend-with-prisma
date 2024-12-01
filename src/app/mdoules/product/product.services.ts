@@ -6,17 +6,17 @@ import { fileUpload } from "../../../utils/fileUploader";
 
 const createProduct = async (req:Request) => {
 
+
+
     if (req.file) {
         const uploadedProfileImage = await fileUpload.uploadToCloudinary(req.file);
         req.body.images = uploadedProfileImage?.secure_url;
       }
     
-
-  const result = prisma.product.create({
-    data: {
-      ...req.body,
-     
-    },
+ console.log(req.body,'iam bod');
+ 
+  const result = await prisma.product.create({
+    data: req.body
   });
 
   return result;
