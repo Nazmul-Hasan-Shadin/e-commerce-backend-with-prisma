@@ -1,6 +1,8 @@
+import { Request } from "express";
 import catchAsync from "../../../utils/catchAsync";
 import sendResponse from "../../../utils/sendResponse";
 import { AuthServices } from "./auth.services";
+import { IAuthUser } from "../../../interface/common";
 
 const loginUser = catchAsync(async (req, res) => {
   const result = await AuthServices.loginUser(req.body);
@@ -22,7 +24,7 @@ const loginUser = catchAsync(async (req, res) => {
   });
 });
 
-const changePassword = catchAsync(async (req, res) => {
+const changePassword = catchAsync(async (req:Request & {user?:IAuthUser}, res) => {
     
   const user= req.user;
   

@@ -1,9 +1,11 @@
+import { Request } from "express";
 import catchAsync from "../../../utils/catchAsync";
 import sendResponse from "../../../utils/sendResponse";
 import { ShopController } from "../shop/shop.controller";
 import { FollowerServices } from "./shopFollow.services";
+import { IAuthUser } from "../../../interface/common";
 
-export const followShop = catchAsync(async (req, res) => {
+export const followShop = catchAsync(async (req:Request & {user?:IAuthUser}, res) => {
     const { userId, shopId } = req.body;
 
     const user=req.user;
@@ -20,7 +22,7 @@ export const followShop = catchAsync(async (req, res) => {
   });
   
   // Unfollow a Shop
-  export const unfollowShop = catchAsync(async (req, res) => {
+  export const unfollowShop = catchAsync(async (req:Request & {user?:IAuthUser}, res) => {
     const { userId, shopId } = req.body;
     const user=req.user
   
