@@ -7,8 +7,9 @@ import { Role } from '@prisma/client';
 const router=express()
 
 
-router.post('/',auth(Role.admin),CategoryController.createCategory)
+router.post('/create-category',auth(Role.admin),CategoryController.createCategory)
 
-
+router.put("/:categoryId", CategoryController.updateCategory);
+router.delete("/:categoryId", CategoryController.deleteCategory);
 
 export const CategoryRoutes=router

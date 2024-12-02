@@ -1,0 +1,14 @@
+import express from "express";
+
+import { Role } from "@prisma/client";
+import { OrderController } from "./order.controller";
+import auth from "../Auth/auth";
+
+const router = express.Router();
+
+router.get("/", auth(Role.admin,Role.vendor),OrderController.getAllOrders);
+router.get("/:id", OrderController.getOrderById);
+
+router.post("/", OrderController.createOrder);
+
+export const OrderRoutes = router;

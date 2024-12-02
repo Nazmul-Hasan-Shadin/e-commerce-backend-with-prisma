@@ -4,6 +4,8 @@ import { AuthRoutes } from "../mdoules/Auth/auth.route";
 import { CategoryRoutes } from "../mdoules/category/category.route";
 import { ProductRoutes } from "../mdoules/product/product.route";
 import { ShopRoutes } from "../mdoules/shop/shop.route";
+import { OrderRoutes } from "../mdoules/order/order.route";
+import { ReviewRoutes } from "../mdoules/review/review.route";
 
 const router = express.Router();
 
@@ -17,7 +19,7 @@ const moduleRoutes = [
     route: AuthRoutes,
   },
   {
-    path: "/create-category",
+    path: "/category",
     route: CategoryRoutes,
   },
   {
@@ -27,6 +29,14 @@ const moduleRoutes = [
   {
     path: "/",
     route: ShopRoutes,
+  },
+  {
+    path: "/order",
+    route: OrderRoutes,
+  },
+  {
+    path: "/review",
+    route: ReviewRoutes,
   },
 ];
 

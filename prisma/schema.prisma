@@ -23,6 +23,9 @@ model User {
   status UserStatus @default(active)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  Order Order[]
+
+  review Review[]
 
   shop Shop?
 
@@ -39,6 +42,7 @@ model Shop {
   updatedAt   DateTime @updatedAt
   vendor      User @relation(fields: [vendorId], references: [id])
   product Product[]
+  Order Order[]
 
 }
 
@@ -59,8 +63,8 @@ model Product {
 
 
   category    Category   @relation(fields: [categoryId], references: [id])
-  // Reviews         ProductReview[]
-  // OrderItems      OrderItem[]
+  review         Review[]
+  OrderItems      OrderItem[]
   // CartItems       CartItem[]
 }
 
@@ -82,7 +86,44 @@ model Category {
 }
 
 
+model Order {
+  id          String        @id @default(uuid())
+  shopId      String
+  shop        Shop          @relation(fields: [shopId], references: [id])
+  customerId  String
+  customer    User          @relation(fields: [customerId], references: [id])
+  status      PaymentStatus   @default(pending)
+  totalAmount Float
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  orderItems  OrderItem[]
+}
 
+model OrderItem {
+  id        String   @id @default(uuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id])
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Int
+  price     Float
+}
+
+  
+
+  model Review {
+  id        String   @id @default(uuid())
+  rating    Int
+  comment   String?
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([productId, userId])
+}
 
 
 
