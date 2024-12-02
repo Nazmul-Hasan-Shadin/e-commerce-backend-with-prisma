@@ -28,6 +28,7 @@ model User {
   review Review[]
 
   shop Shop?
+  shopFollower ShopFollower[]
 
 }
 
@@ -43,6 +44,7 @@ model Shop {
   vendor      User @relation(fields: [vendorId], references: [id])
   product Product[]
   Order Order[]
+  shopFollower ShopFollower[]
 
 }
 
@@ -72,10 +74,8 @@ model Product {
 model Category {
   id          String     @id @default(uuid())
   name        String     @unique
-  description String?    // Optional description for the category
-  // parentId    String?    // For nested categories (if needed)
-  // parent      Category?  @relation("CategoryParent", fields: [parentId], references: [id])
-  // children    Category[] @relation("CategoryParent")
+  description String?  
+
   products    Product[]
 
   
@@ -123,6 +123,17 @@ model OrderItem {
   updatedAt DateTime @updatedAt
 
   @@index([productId, userId])
+}
+
+model ShopFollower {
+ 
+  userId   String @unique
+  shopId   String
+
+  user     User   @relation(fields: [userId], references: [id])
+  shop     Shop   @relation(fields: [shopId], references: [id])
+
+  @@unique([userId,shopId])
 }
 
 
