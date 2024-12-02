@@ -13,4 +13,7 @@ router.post(
   }
 );
 
+router.patch('/:id',ProductController.updateProduct)
+router.delete('/:id',ProductController.deleteProduct)
+
 export const ProductRoutes = router;

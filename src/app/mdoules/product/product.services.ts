@@ -22,6 +22,24 @@ const createProduct = async (req:Request) => {
   return result;
 };
 
+const updateProduct = async (productId: string, payload: any) => {
+  const updatedProduct = await prisma.product.update({
+    where: { id: productId },
+    data: payload,
+  });
+  return updatedProduct;
+};
+
+const deleteProduct = async (productId: string) => {
+  await prisma.product.delete({
+    where: { id: productId },
+  });
+  return { message: "Product deleted successfully" };
+};
+
+
 export const ProductServices = {
   createProduct,
+  updateProduct,
+  deleteProduct
 };
