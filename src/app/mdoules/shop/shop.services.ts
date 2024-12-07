@@ -1,19 +1,16 @@
 import { Shop } from "@prisma/client";
 import prisma from "../../../utils/prisma";
+import { Request } from "express";
 
-const createShop = async (payload: {
-  name: string;
-  logo: string;
-  description: string;
-  vendorId: string;
-}) => {
+const createShop = async (req: Request) => {
+  if (req.file) {
+    req.body.logo = req?.file.path;
+  }
+
+  console.log(req.body, "iam body bro");
+
   const newShop: Shop = await prisma.shop.create({
-    data: {
-      name: payload.name,
-      logoUrl: payload.logo,
-      description: payload.description,
-      vendorId: payload.vendorId,
-    },
+    data: req.body,
     include: {
       vendor: true,
     },
@@ -21,6 +18,18 @@ const createShop = async (payload: {
   return newShop;
 };
 
+const getShopById = async (shopId: string) => {
+  const result = await prisma.shop.findUnique({
+    where: {
+      id: shopId,
+    },
+    include: {
+      shopFollower: true,
+    },
+  });
+  return result;
+};
 export const shopServices = {
   createShop,
+  getShopById,
 };

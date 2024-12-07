@@ -12,7 +12,7 @@ const router = express.Router();
 
 const moduleRoutes = [
   {
-    path: "/register",
+    path: "/user",
     route: UserRoutes,
   },
   {
@@ -28,7 +28,7 @@ const moduleRoutes = [
     route: ProductRoutes,
   },
   {
-    path: "/",
+    path: "/shop",
     route: ShopRoutes,
   },
   {

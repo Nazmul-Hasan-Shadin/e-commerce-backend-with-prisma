@@ -12,7 +12,16 @@ const createCategory = async (payload: any) => {
   return result;
 };
 
-const updateCategory = async (categoryId: string, data: { name: string; description: string }) => {
+const getCategory = async () => {
+  const result = prisma.category.findMany({});
+
+  return result;
+};
+
+const updateCategory = async (
+  categoryId: string,
+  data: { name: string; description: string }
+) => {
   const updatedCategory = await prisma.category.update({
     where: {
       id: categoryId,
@@ -36,5 +45,6 @@ const deleteCategory = async (categoryId: string) => {
 export const CategoryServices = {
   createCategory,
   updateCategory,
-  deleteCategory
+  deleteCategory,
+  getCategory,
 };

@@ -1,14 +1,21 @@
-import express from 'express';
-import { ShopController } from './shop.controller';
-import auth from '../Auth/auth';
-import { Role } from '@prisma/client';
+import express, { NextFunction, Request, Response } from "express";
+import { ShopController } from "./shop.controller";
+import auth from "../Auth/auth";
+import { Role } from "@prisma/client";
+import { fileUpload } from "../../../utils/fileUploader";
 
+const router = express();
 
-const router=express()
+router.get("/:id", ShopController.shopById);
 
+router.post(
+  "/create-shop",
+  fileUpload.multerUpload.single("file"),
+  auth(Role.vendor, Role.admin),
+  (req: Request, res: Response, next: NextFunction) => {
+    (req.body = JSON.parse(req.body.data)),
+      ShopController.createShop(req, res, next);
+  }
+);
 
-router.post('/create-shop',auth(Role.vendor),ShopController.createShop)
-
-
-
-export const ShopRoutes=router
+export const ShopRoutes = router;

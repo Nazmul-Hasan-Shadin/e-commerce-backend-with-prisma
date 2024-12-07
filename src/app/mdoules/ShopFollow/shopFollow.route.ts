@@ -1,14 +1,16 @@
-import express from 'express';
+import express from "express";
 
-import { FollowerController } from './shopFollow.controller';
-import auth from '../Auth/auth';
-import { Role } from '@prisma/client';
+import { FollowerController } from "./shopFollow.controller";
+import auth from "../Auth/auth";
+import { Role } from "@prisma/client";
 
+const router = express();
 
-const router=express()
+router.post(
+  "/follow",
+  auth(Role.user, Role.admin, Role.vendor),
+  FollowerController.followShop
+);
+router.post("/unfollow", auth(Role.user), FollowerController.unfollowShop);
 
-
-router.post('/follow',auth(Role.user),FollowerController.followShop)
-router.post('/unfollow',auth(Role.user),FollowerController.unfollowShop)
-
-export const FollowerRoutes=router
+export const FollowerRoutes = router;

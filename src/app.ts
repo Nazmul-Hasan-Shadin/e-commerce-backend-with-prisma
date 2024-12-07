@@ -5,7 +5,12 @@ import globlaErrorHandler from "./middleware/globalError";
 
 const app: Application = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:3000"],
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 app.use(
@@ -13,16 +18,12 @@ app.use(
     extended: true,
   })
 );
-app.use('/api/v1',router);
+app.use("/api/v1", router);
 
- 
-app.get('/',(req,res)=>{
-   res.send('server is listenting')
-})
+app.get("/", (req, res) => {
+  res.send("server is listenting");
+});
 
-app.use(globlaErrorHandler)
-
-
-
+app.use(globlaErrorHandler);
 
 export default app;
