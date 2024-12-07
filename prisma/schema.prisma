@@ -157,7 +157,7 @@ model OrderItem {
 
 model ShopFollower {
  
-  userId   String @unique
+  userId   String 
   shopId   String
 
   user     User   @relation(fields: [userId], references: [id])

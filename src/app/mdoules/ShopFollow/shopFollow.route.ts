@@ -7,6 +7,12 @@ import { Role } from "@prisma/client";
 const router = express();
 
 router.post(
+  "/check-validity-follow",
+  auth(Role.user, Role.admin, Role.vendor),
+  FollowerController.checkFollowValidity
+);
+
+router.post(
   "/follow",
   auth(Role.user, Role.admin, Role.vendor),
   FollowerController.followShop

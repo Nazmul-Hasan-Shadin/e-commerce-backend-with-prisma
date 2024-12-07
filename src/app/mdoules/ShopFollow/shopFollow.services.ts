@@ -32,6 +32,23 @@ const followShop = async (user: any, shopId: string) => {
   });
 };
 
+const checkValidityOfFollow = async (userId: string, shopId: string) => {
+  if (!userId || !shopId) {
+    throw new Error("Both userId and shopId are required.");
+  }
+  const result = await prisma.shopFollower.findUnique({
+    where: {
+      userId_shopId: {
+        userId,
+        shopId,
+      },
+    },
+  });
+  console.log(result, "kkkkkkkkkkkkkkkkkkkk");
+
+  return result !== null;
+};
+
 const unfollowShop = async (user: any, shopId: string) => {
   const existingUser = await prisma.user.findUnique({
     where: {
@@ -73,4 +90,5 @@ const unfollowShop = async (user: any, shopId: string) => {
 export const FollowerServices = {
   unfollowShop,
   followShop,
+  checkValidityOfFollow,
 };
