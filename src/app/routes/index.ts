@@ -7,6 +7,7 @@ import { ShopRoutes } from "../mdoules/shop/shop.route";
 import { OrderRoutes } from "../mdoules/order/order.route";
 import { ReviewRoutes } from "../mdoules/review/review.route";
 import { FollowerRoutes } from "../mdoules/ShopFollow/shopFollow.route";
+import { PaymentRoutes } from "../mdoules/payment/payment.route";
 
 const router = express.Router();
 
@@ -42,6 +43,10 @@ const moduleRoutes = [
   {
     path: "/shop",
     route: FollowerRoutes,
+  },
+  {
+    path: "",
+    route: PaymentRoutes,
   },
 ];
 

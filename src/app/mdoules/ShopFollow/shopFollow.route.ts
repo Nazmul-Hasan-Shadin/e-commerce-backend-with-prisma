@@ -17,6 +17,10 @@ router.post(
   auth(Role.user, Role.admin, Role.vendor),
   FollowerController.followShop
 );
-router.post("/unfollow", auth(Role.user), FollowerController.unfollowShop);
+router.post(
+  "/unfollow",
+  auth(Role.user, Role.admin),
+  FollowerController.unfollowShop
+);
 
 export const FollowerRoutes = router;

@@ -54,6 +54,13 @@ const updateProduct = async (productId: string, payload: any) => {
 };
 
 const deleteProduct = async (productId: string) => {
+  await prisma.orderItem.deleteMany({
+    where: { productId: productId },
+  });
+  await prisma.review.deleteMany({
+    where: { productId: productId },
+  });
+
   await prisma.product.delete({
     where: { id: productId },
   });

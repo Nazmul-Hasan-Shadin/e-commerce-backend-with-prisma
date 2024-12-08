@@ -65,17 +65,13 @@ const unfollowShop = async (user: any, shopId: string) => {
 
   const userId = existingUser?.id;
 
-  if (existingUser.role !== "user") {
-    throw new Error("Only users can unfollow shops");
-  }
+  // const followerRecord = existingUser.shopFollower?.find(
+  //   (follower) => follower.shopId === shopId
+  // );
 
-  const followerRecord = existingUser.shopFollower?.find(
-    (follower) => follower.shopId === shopId
-  );
-
-  if (!followerRecord) {
-    throw new Error("User does not follow this shop");
-  }
+  // if (!followerRecord) {
+  //   throw new Error("User does not follow this shop");
+  // }
 
   return prisma.shopFollower.delete({
     where: {
