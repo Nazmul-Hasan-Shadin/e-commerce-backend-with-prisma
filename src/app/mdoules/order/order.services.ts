@@ -28,6 +28,7 @@ const createOrder = async (payload: any) => {
 
 const getAllOrdersFromDB = async (user: IAuthUser) => {
   let result;
+
   if (user.role === "vendor") {
     result = await prisma.order.findMany({
       where: {
