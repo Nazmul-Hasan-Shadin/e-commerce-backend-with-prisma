@@ -7,8 +7,6 @@ const createShop = async (req: Request) => {
     req.body.logo = req?.file.path;
   }
 
-  console.log(req.body, "iam body bro");
-
   const newShop: Shop = await prisma.shop.create({
     data: req.body,
     include: {

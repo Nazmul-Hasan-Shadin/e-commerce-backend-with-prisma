@@ -19,7 +19,7 @@ router.post(
 );
 router.post(
   "/unfollow",
-  auth(Role.user, Role.admin),
+  auth(Role.user, Role.admin, Role.vendor),
   FollowerController.unfollowShop
 );
 

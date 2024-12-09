@@ -7,7 +7,7 @@ import { IAuthUser } from "../../../interface/common";
 
 export const followShop = catchAsync(
   async (req: Request & { user?: IAuthUser }, res) => {
-    const { userId, shopId } = req.body;
+    const { shopId } = req.body;
 
     const user = req.user;
 
@@ -24,22 +24,37 @@ export const followShop = catchAsync(
 
 export const checkFollowValidity = catchAsync(
   async (req: Request & { user?: IAuthUser }, res) => {
-    const { userId, shopId } = req.body;
+    const { shopId } = req.body;
 
-    const result = await FollowerServices.checkValidityOfFollow(userId, shopId);
+    const user = req.user;
 
-    sendResponse(res, {
-      statusCode: 200,
-      success: true,
-      message: "status done",
-      data: result,
-    });
+    const isFollowing = await FollowerServices.checkValidityOfFollow(
+      user,
+      shopId
+    );
+    console.log(isFollowing, "isFollowing");
+
+    if (isFollowing) {
+      sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "User is following the shop.",
+        data: isFollowing,
+      });
+    } else {
+      sendResponse(res, {
+        statusCode: 404,
+        success: false,
+        message: "User is not following the shop.",
+        data: null,
+      });
+    }
   }
 );
 
 export const unfollowShop = catchAsync(
   async (req: Request & { user?: IAuthUser }, res) => {
-    const { userId, shopId } = req.body;
+    const { shopId } = req.body;
     const user = req.user;
 
     const result = await FollowerServices.unfollowShop(user, shopId);

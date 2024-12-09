@@ -32,21 +32,32 @@ const followShop = async (user: any, shopId: string) => {
   });
 };
 
-const checkValidityOfFollow = async (userId: string, shopId: string) => {
-  if (!userId || !shopId) {
-    throw new Error("Both userId and shopId are required.");
+const checkValidityOfFollow = async (user: any, shopId: string) => {
+  // if (!userId || !shopId) {
+  //   throw new Error("Both userId and shopId are required.");
+  // }
+  const existingUser = await prisma.user.findUnique({
+    where: {
+      email: user.email,
+    },
+    include: {
+      shopFollower: true,
+    },
+  });
+
+  if (!existingUser) {
+    throw new Error("User not found");
   }
   const result = await prisma.shopFollower.findUnique({
     where: {
       userId_shopId: {
-        userId,
+        userId: existingUser?.id,
         shopId,
       },
     },
   });
-  console.log(result, "kkkkkkkkkkkkkkkkkkkk");
 
-  return result !== null;
+  return result;
 };
 
 const unfollowShop = async (user: any, shopId: string) => {

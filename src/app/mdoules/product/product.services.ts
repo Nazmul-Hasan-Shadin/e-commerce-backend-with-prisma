@@ -6,6 +6,9 @@ import { fileUpload } from "../../../utils/fileUploader";
 
 const getAllProduct = async (filters: any) => {
   const { searchTerm, isFlash, categoryName, ...filterData } = filters;
+  console.log(filters, "iam filters");
+
+  console.log(categoryName, "iam category name");
 
   let category;
   if (categoryName) {
@@ -16,7 +19,7 @@ const getAllProduct = async (filters: any) => {
     });
   }
 
-  console.log(category, "hi");
+  console.log(category, "hi ima filna category lists bro ");
 
   const andCondition: Prisma.ProductWhereInput[] = [];
   if (searchTerm) {
@@ -29,17 +32,13 @@ const getAllProduct = async (filters: any) => {
       })),
     });
   }
-  console.log("start", filterData);
 
   if (Object.keys(filterData).length > 0) {
-    console.log("iam entrdd");
-
     const filterCondition = Object.keys(filterData).map((key) => ({
       [key]: {
         equals: filterData[key],
       },
     }));
-    console.log(...filterCondition);
 
     andCondition.push(...filterCondition);
   }
@@ -67,8 +66,6 @@ const getAllProduct = async (filters: any) => {
   const result = await prisma.product.findMany({
     where: whereCondition,
   });
-
-  console.log(result, "iam result");
 
   return result;
 };

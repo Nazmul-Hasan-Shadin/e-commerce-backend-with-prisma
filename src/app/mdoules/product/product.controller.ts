@@ -14,7 +14,7 @@ const createProductIntoDb = catchAsync(async (req, res, next) => {
 });
 
 const getAllProduct = catchAsync(async (req, res, next) => {
-  console.log(req.body, "iam body");
+  console.log(req.query, "fuckd paruey");
 
   const result = await ProductServices.getAllProduct(req.query);
 
