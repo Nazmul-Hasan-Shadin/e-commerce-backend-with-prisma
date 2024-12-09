@@ -4,8 +4,8 @@ import { fileUpload } from "../../../utils/fileUploader";
 
 const router = express();
 router.get("/", ProductController.getAllProduct);
-router.get("/shop/products/:shopId", ProductController.getProductByShopId);
 router.get("/:id", ProductController.getSingleProduct);
+router.get("/shop/products/:shopId", ProductController.getProductByShopId);
 
 router.post(
   "/create-product",

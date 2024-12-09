@@ -45,6 +45,15 @@ const getAllOrdersFromDB = async (user: IAuthUser) => {
         orderItems: {
           include: {
             product: true,
+            order: {
+              include: {
+                orderItems: {
+                  include: {
+                    product: true,
+                  },
+                },
+              },
+            },
           },
         },
       },
@@ -59,7 +68,15 @@ const getAllOrdersFromDB = async (user: IAuthUser) => {
         customer: true,
         orderItems: {
           include: {
-            product: true,
+            product: {
+              include: {
+                OrderItems: {
+                  include: {
+                    product: true,
+                  },
+                },
+              },
+            },
           },
         },
       },

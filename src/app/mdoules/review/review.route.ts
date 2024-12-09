@@ -6,7 +6,11 @@ import { ProductController } from "../product/product.controller";
 
 const router = express.Router();
 
-router.post("/", auth(Role.user), ReviewController.addReview);
+router.post(
+  "/",
+  auth(Role.user, Role.admin, Role.vendor),
+  ReviewController.addReview
+);
 
 router.get("/:productId", ReviewController.getProductWithReview);
 

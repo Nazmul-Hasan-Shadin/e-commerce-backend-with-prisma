@@ -64,6 +64,7 @@ const unfollowShop = async (user: any, shopId: string) => {
   }
 
   const userId = existingUser?.id;
+  console.log("iam enterd ", userId, shopId);
 
   // const followerRecord = existingUser.shopFollower?.find(
   //   (follower) => follower.shopId === shopId
@@ -73,7 +74,7 @@ const unfollowShop = async (user: any, shopId: string) => {
   //   throw new Error("User does not follow this shop");
   // }
 
-  return prisma.shopFollower.delete({
+  return await prisma.shopFollower.delete({
     where: {
       userId_shopId: {
         userId,

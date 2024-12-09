@@ -5,7 +5,18 @@ import { Request } from "express";
 import { fileUpload } from "../../../utils/fileUploader";
 
 const getAllProduct = async (filters: any) => {
-  const { searchTerm, categoryName, ...filterData } = filters;
+  const { searchTerm, isFlash, categoryName, ...filterData } = filters;
+
+  let category;
+  if (categoryName) {
+    category = await prisma.category.findUnique({
+      where: {
+        id: categoryName,
+      },
+    });
+  }
+
+  console.log(category, "hi");
 
   const andCondition: Prisma.ProductWhereInput[] = [];
   if (searchTerm) {
@@ -33,11 +44,17 @@ const getAllProduct = async (filters: any) => {
     andCondition.push(...filterCondition);
   }
 
+  if (isFlash) {
+    andCondition.push({
+      isFlash: isFlash === "true",
+    });
+  }
+
   if (categoryName) {
     andCondition.push({
       category: {
         name: {
-          contains: categoryName,
+          contains: category?.name,
           mode: "insensitive",
         },
       },

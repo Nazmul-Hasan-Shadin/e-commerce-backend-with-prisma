@@ -1,11 +1,16 @@
 import { User } from "@prisma/client";
 import prisma from "../../../utils/prisma";
 import bcrypt from "bcrypt";
+import { Request } from "express";
 
-const createCategory = async (payload: any) => {
+const createCategory = async (req: Request) => {
+  if (req.file) {
+    req.body.images = req?.file.path;
+  }
+
   const result = prisma.category.create({
     data: {
-      ...payload,
+      ...req.body,
     },
   });
 

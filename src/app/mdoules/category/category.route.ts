@@ -1,20 +1,29 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import { CategoryController } from "./category.controller";
 import auth from "../Auth/auth";
 import { Role } from "@prisma/client";
+import { fileUpload } from "../../../utils/fileUploader";
 
 const router = express();
 
 router.get(
   "/",
-  auth(Role.admin, Role.user, Role.vendor),
+
   CategoryController.getCategory
 );
 
 router.post(
   "/create-category",
   auth(Role.admin),
-  CategoryController.createCategory
+
+  fileUpload.multerUpload.single("file"),
+  (req: Request, res: Response, next: NextFunction) => {
+    (req.body = JSON.parse(req.body.data)), console.log(req.body.data, "bsl");
+
+    CategoryController.createCategory(req, res, next);
+  }
+
+  // CategoryController.createCategory
 );
 
 router.put("/:categoryId", CategoryController.updateCategory);

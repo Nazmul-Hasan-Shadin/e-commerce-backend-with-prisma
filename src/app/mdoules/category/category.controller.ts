@@ -4,7 +4,7 @@ import { AuthServices } from "../Auth/auth.services";
 import { CategoryServices } from "./categroy.services";
 
 const createCategory = catchAsync(async (req, res) => {
-  const result = await CategoryServices.createCategory(req.body);
+  const result = await CategoryServices.createCategory(req);
 
   sendResponse(res, {
     statusCode: 200,
