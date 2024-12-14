@@ -12,32 +12,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.shopServices = void 0;
-const prisma_1 = __importDefault(require("../../../utils/prisma"));
-const createShop = (req) => __awaiter(void 0, void 0, void 0, function* () {
-    if (req.file) {
-        req.body.logo = req === null || req === void 0 ? void 0 : req.file.path;
-    }
-    const newShop = yield prisma_1.default.shop.create({
-        data: req.body,
-        include: {
-            vendor: true,
-        },
+exports.PaymentServices = void 0;
+const payment_const_1 = __importDefault(require("./payment.const"));
+const createPaymentIntend = (price) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("iam backend price");
+    const priceamount = Math.round(price * 100);
+    const paymentIntent = yield payment_const_1.default.paymentIntents.create({
+        amount: priceamount,
+        currency: "usd",
+        payment_method_types: ["card"],
     });
-    return newShop;
+    return paymentIntent;
 });
-const getShopById = (shopId) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield prisma_1.default.shop.findUnique({
-        where: {
-            id: shopId,
-        },
-        include: {
-            shopFollower: true,
-        },
-    });
-    return result;
-});
-exports.shopServices = {
-    createShop,
-    getShopById,
+exports.PaymentServices = {
+    createPaymentIntend,
 };

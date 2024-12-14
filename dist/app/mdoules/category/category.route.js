@@ -8,8 +8,15 @@ const express_1 = __importDefault(require("express"));
 const category_controller_1 = require("./category.controller");
 const auth_1 = __importDefault(require("../Auth/auth"));
 const client_1 = require("@prisma/client");
+const fileUploader_1 = require("../../../utils/fileUploader");
 const router = (0, express_1.default)();
-router.post('/create-category', (0, auth_1.default)(client_1.Role.admin), category_controller_1.CategoryController.createCategory);
+router.get("/", category_controller_1.CategoryController.getCategory);
+router.post("/create-category", (0, auth_1.default)(client_1.Role.admin), fileUploader_1.fileUpload.multerUpload.single("file"), (req, res, next) => {
+    (req.body = JSON.parse(req.body.data)), console.log(req.body.data, "bsl");
+    category_controller_1.CategoryController.createCategory(req, res, next);
+}
+// CategoryController.createCategory
+);
 router.put("/:categoryId", category_controller_1.CategoryController.updateCategory);
 router.delete("/:categoryId", category_controller_1.CategoryController.deleteCategory);
 exports.CategoryRoutes = router;

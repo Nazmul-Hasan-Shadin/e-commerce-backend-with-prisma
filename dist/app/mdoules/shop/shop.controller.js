@@ -17,7 +17,7 @@ const catchAsync_1 = __importDefault(require("../../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../../utils/sendResponse"));
 const shop_services_1 = require("./shop.services");
 const createShop = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield shop_services_1.shopServices.createShop(req.body);
+    const result = yield shop_services_1.shopServices.createShop(req);
     (0, sendResponse_1.default)(res, {
         statusCode: 200,
         success: true,
@@ -25,6 +25,16 @@ const createShop = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
         data: result,
     });
 }));
+const shopById = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield shop_services_1.shopServices.getShopById(req.params.id);
+    (0, sendResponse_1.default)(res, {
+        statusCode: 200,
+        success: true,
+        message: "shop is retrived succesful",
+        data: result,
+    });
+}));
 exports.ShopController = {
     createShop,
+    shopById,
 };

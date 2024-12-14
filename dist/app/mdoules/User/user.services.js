@@ -23,6 +23,20 @@ const createUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     });
     return result;
 });
+const getUserByEmail = (userInfo) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield prisma_1.default.user.findUnique({
+        where: {
+            email: userInfo.email,
+        },
+        include: {
+            Order: true,
+            shop: true,
+            shopFollower: true,
+        },
+    });
+    return user;
+});
 exports.UserServices = {
     createUser,
+    getUserByEmail,
 };

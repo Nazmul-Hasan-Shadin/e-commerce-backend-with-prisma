@@ -14,10 +14,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CategoryServices = void 0;
 const prisma_1 = __importDefault(require("../../../utils/prisma"));
-const createCategory = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+const createCategory = (req) => __awaiter(void 0, void 0, void 0, function* () {
+    if (req.file) {
+        req.body.images = req === null || req === void 0 ? void 0 : req.file.path;
+    }
     const result = prisma_1.default.category.create({
-        data: Object.assign({}, payload),
+        data: Object.assign({}, req.body),
     });
+    return result;
+});
+const getCategory = () => __awaiter(void 0, void 0, void 0, function* () {
+    const result = prisma_1.default.category.findMany({});
     return result;
 });
 const updateCategory = (categoryId, data) => __awaiter(void 0, void 0, void 0, function* () {
@@ -40,5 +47,6 @@ const deleteCategory = (categoryId) => __awaiter(void 0, void 0, void 0, functio
 exports.CategoryServices = {
     createCategory,
     updateCategory,
-    deleteCategory
+    deleteCategory,
+    getCategory,
 };

@@ -12,14 +12,15 @@ const shop_route_1 = require("../mdoules/shop/shop.route");
 const order_route_1 = require("../mdoules/order/order.route");
 const review_route_1 = require("../mdoules/review/review.route");
 const shopFollow_route_1 = require("../mdoules/ShopFollow/shopFollow.route");
+const payment_route_1 = require("../mdoules/payment/payment.route");
 const router = express_1.default.Router();
 const moduleRoutes = [
     {
-        path: "/register",
+        path: "/user",
         route: user_route_1.UserRoutes,
     },
     {
-        path: "/user",
+        path: "/auth",
         route: auth_route_1.AuthRoutes,
     },
     {
@@ -31,7 +32,7 @@ const moduleRoutes = [
         route: product_route_1.ProductRoutes,
     },
     {
-        path: "/",
+        path: "/shop",
         route: shop_route_1.ShopRoutes,
     },
     {
@@ -45,6 +46,10 @@ const moduleRoutes = [
     {
         path: "/shop",
         route: shopFollow_route_1.FollowerRoutes,
+    },
+    {
+        path: "",
+        route: payment_route_1.PaymentRoutes,
     },
 ];
 moduleRoutes.forEach((route) => router.use(route.path, route.route));

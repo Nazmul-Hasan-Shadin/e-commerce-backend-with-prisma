@@ -39,8 +39,32 @@ const followShop = (user, shopId) => __awaiter(void 0, void 0, void 0, function*
         },
     });
 });
+const checkValidityOfFollow = (user, shopId) => __awaiter(void 0, void 0, void 0, function* () {
+    // if (!userId || !shopId) {
+    //   throw new Error("Both userId and shopId are required.");
+    // }
+    const existingUser = yield prisma_1.default.user.findUnique({
+        where: {
+            email: user.email,
+        },
+        include: {
+            shopFollower: true,
+        },
+    });
+    if (!existingUser) {
+        throw new Error("User not found");
+    }
+    const result = yield prisma_1.default.shopFollower.findUnique({
+        where: {
+            userId_shopId: {
+                userId: existingUser === null || existingUser === void 0 ? void 0 : existingUser.id,
+                shopId,
+            },
+        },
+    });
+    return result;
+});
 const unfollowShop = (user, shopId) => __awaiter(void 0, void 0, void 0, function* () {
-    var _b;
     const existingUser = yield prisma_1.default.user.findUnique({
         where: {
             email: user.email,
@@ -53,14 +77,14 @@ const unfollowShop = (user, shopId) => __awaiter(void 0, void 0, void 0, functio
         throw new Error("User not found");
     }
     const userId = existingUser === null || existingUser === void 0 ? void 0 : existingUser.id;
-    if (existingUser.role !== "user") {
-        throw new Error("Only users can unfollow shops");
-    }
-    const followerRecord = (_b = existingUser.shopFollower) === null || _b === void 0 ? void 0 : _b.find((follower) => follower.shopId === shopId);
-    if (!followerRecord) {
-        throw new Error("User does not follow this shop");
-    }
-    return prisma_1.default.shopFollower.delete({
+    console.log("iam enterd ", userId, shopId);
+    // const followerRecord = existingUser.shopFollower?.find(
+    //   (follower) => follower.shopId === shopId
+    // );
+    // if (!followerRecord) {
+    //   throw new Error("User does not follow this shop");
+    // }
+    return yield prisma_1.default.shopFollower.delete({
         where: {
             userId_shopId: {
                 userId,
@@ -72,4 +96,5 @@ const unfollowShop = (user, shopId) => __awaiter(void 0, void 0, void 0, functio
 exports.FollowerServices = {
     unfollowShop,
     followShop,
+    checkValidityOfFollow,
 };

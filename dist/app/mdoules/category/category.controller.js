@@ -17,11 +17,20 @@ const catchAsync_1 = __importDefault(require("../../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../../utils/sendResponse"));
 const categroy_services_1 = require("./categroy.services");
 const createCategory = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield categroy_services_1.CategoryServices.createCategory(req.body);
+    const result = yield categroy_services_1.CategoryServices.createCategory(req);
     (0, sendResponse_1.default)(res, {
         statusCode: 200,
         success: true,
         message: "Category is created succesful",
+        data: result,
+    });
+}));
+const getCategory = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield categroy_services_1.CategoryServices.getCategory();
+    (0, sendResponse_1.default)(res, {
+        statusCode: 200,
+        success: true,
+        message: "Category are retrived succesful",
         data: result,
     });
 }));
@@ -53,4 +62,5 @@ exports.CategoryController = {
     createCategory,
     updateCategory,
     deleteCategory,
+    getCategory,
 };

@@ -12,6 +12,12 @@ router.get(
   CategoryController.getCategory
 );
 
+router.get(
+  "/:id",
+
+  CategoryController.getCategoryById
+);
+
 router.post(
   "/create-category",
   auth(Role.admin),

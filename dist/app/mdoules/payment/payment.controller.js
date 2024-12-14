@@ -12,29 +12,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserController = void 0;
+exports.PaymentController = void 0;
 const catchAsync_1 = __importDefault(require("../../../utils/catchAsync"));
-const sendResponse_1 = __importDefault(require("../../../utils/sendResponse"));
-const user_services_1 = require("./user.services");
-const createUserIntoDb = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield user_services_1.UserServices.createUser(req.body);
-    (0, sendResponse_1.default)(res, {
-        statusCode: 200,
-        success: true,
-        message: "users are created succesful",
-        data: result,
+const payment_services_1 = require("./payment.services");
+const paymentIntend = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { price } = req.body;
+    const result = yield payment_services_1.PaymentServices.createPaymentIntend(price);
+    res.send({
+        clientSecret: result.client_secret,
     });
 }));
-const getCurrentUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield user_services_1.UserServices.getUserByEmail(req.user);
-    (0, sendResponse_1.default)(res, {
-        statusCode: 200,
-        success: true,
-        message: "users is fetched succesful",
-        data: result,
-    });
-}));
-exports.UserController = {
-    createUserIntoDb,
-    getCurrentUser,
+exports.PaymentController = {
+    paymentIntend,
 };

@@ -25,6 +25,34 @@ const createProductIntoDb = (0, catchAsync_1.default)((req, res, next) => __awai
         data: result,
     });
 }));
+const getAllProduct = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(req.query, "fuckd paruey");
+    const result = yield product_services_1.ProductServices.getAllProduct(req.query);
+    (0, sendResponse_1.default)(res, {
+        statusCode: 200,
+        success: true,
+        message: "Product are fetch succesful",
+        data: result,
+    });
+}));
+const getSingleProduct = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield product_services_1.ProductServices.getSingleProduct(req.params.id);
+    (0, sendResponse_1.default)(res, {
+        statusCode: 200,
+        success: true,
+        message: "Product retrived successfully",
+        data: result,
+    });
+}));
+const getProductByShopId = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield product_services_1.ProductServices.getProductByShopId(req.params.shopId);
+    (0, sendResponse_1.default)(res, {
+        statusCode: 200,
+        success: true,
+        message: "Product are retrived successfully",
+        data: result,
+    });
+}));
 const updateProduct = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield product_services_1.ProductServices.updateProduct(req.params.id, req.body);
     (0, sendResponse_1.default)(res, {
@@ -47,4 +75,7 @@ exports.ProductController = {
     createProductIntoDb,
     updateProduct,
     deleteProduct,
+    getSingleProduct,
+    getAllProduct,
+    getProductByShopId,
 };

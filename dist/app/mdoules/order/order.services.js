@@ -53,6 +53,15 @@ const getAllOrdersFromDB = (user) => __awaiter(void 0, void 0, void 0, function*
                 orderItems: {
                     include: {
                         product: true,
+                        order: {
+                            include: {
+                                orderItems: {
+                                    include: {
+                                        product: true,
+                                    },
+                                },
+                            },
+                        },
                     },
                 },
             },
@@ -68,7 +77,15 @@ const getAllOrdersFromDB = (user) => __awaiter(void 0, void 0, void 0, function*
                 customer: true,
                 orderItems: {
                     include: {
-                        product: true,
+                        product: {
+                            include: {
+                                OrderItems: {
+                                    include: {
+                                        product: true,
+                                    },
+                                },
+                            },
+                        },
                     },
                 },
             },

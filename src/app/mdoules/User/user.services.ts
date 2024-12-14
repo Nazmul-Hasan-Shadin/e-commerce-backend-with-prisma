@@ -28,6 +28,8 @@ const getUserByEmail = async (userInfo: any): Promise<User | null> => {
     },
   });
 
+  console.log("sir ", user);
+
   return user;
 };
 

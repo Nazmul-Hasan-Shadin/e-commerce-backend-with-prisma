@@ -19,8 +19,6 @@ const getAllProduct = async (filters: any) => {
     });
   }
 
-  console.log(category, "hi ima filna category lists bro ");
-
   const andCondition: Prisma.ProductWhereInput[] = [];
   if (searchTerm) {
     andCondition.push({
