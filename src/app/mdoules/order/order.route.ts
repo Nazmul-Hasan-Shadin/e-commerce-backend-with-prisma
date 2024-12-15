@@ -6,7 +6,11 @@ import auth from "../Auth/auth";
 
 const router = express.Router();
 
-router.get("/", auth(Role.admin,Role.vendor),OrderController.getAllOrders);
+router.get(
+  "/",
+  auth(Role.admin, Role.vendor, Role.user),
+  OrderController.getAllOrders
+);
 router.get("/:id", OrderController.getOrderById);
 
 router.post("/", OrderController.createOrder);

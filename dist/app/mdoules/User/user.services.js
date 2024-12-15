@@ -34,6 +34,7 @@ const getUserByEmail = (userInfo) => __awaiter(void 0, void 0, void 0, function*
             shopFollower: true,
         },
     });
+    console.log("sir ", user);
     return user;
 });
 exports.UserServices = {

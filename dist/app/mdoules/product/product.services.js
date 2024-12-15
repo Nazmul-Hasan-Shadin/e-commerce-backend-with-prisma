@@ -37,7 +37,6 @@ const getAllProduct = (filters) => __awaiter(void 0, void 0, void 0, function* (
             },
         });
     }
-    console.log(category, "hi ima filna category lists bro ");
     const andCondition = [];
     if (searchTerm) {
         andCondition.push({

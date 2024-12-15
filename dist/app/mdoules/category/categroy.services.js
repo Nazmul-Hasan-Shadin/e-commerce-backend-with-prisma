@@ -27,6 +27,14 @@ const getCategory = () => __awaiter(void 0, void 0, void 0, function* () {
     const result = prisma_1.default.category.findMany({});
     return result;
 });
+const getCategoryById = (categoryId) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = prisma_1.default.category.findUnique({
+        where: {
+            id: categoryId,
+        },
+    });
+    return result;
+});
 const updateCategory = (categoryId, data) => __awaiter(void 0, void 0, void 0, function* () {
     const updatedCategory = yield prisma_1.default.category.update({
         where: {
@@ -49,4 +57,5 @@ exports.CategoryServices = {
     updateCategory,
     deleteCategory,
     getCategory,
+    getCategoryById,
 };

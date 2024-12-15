@@ -18,6 +18,9 @@ const config_1 = __importDefault(require("../../../config"));
 const jwtUtils_1 = require("../../../utils/jwtUtils");
 const prisma_1 = __importDefault(require("../../../utils/prisma"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const AppError_1 = __importDefault(require("../../error/AppError"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const sendMail_1 = require("../../../utils/sendMail");
 const loginUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(payload);
     const userData = yield prisma_1.default.user.findUniqueOrThrow({
@@ -61,7 +64,57 @@ const changePassword = (user, payload) => __awaiter(void 0, void 0, void 0, func
         message: "password changed successfully",
     };
 });
+const forgetPassword = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield prisma_1.default.user.findUnique({
+        where: {
+            email: id,
+        },
+    });
+    console.log(user, "chage pass user");
+    const userStatus = user === null || user === void 0 ? void 0 : user.status;
+    if (!user) {
+        throw new AppError_1.default(404, "This user is not found ");
+    }
+    const jwtPayload = { email: user.email, role: user.role };
+    const resetToken = jsonwebtoken_1.default.sign(jwtPayload, config_1.default.jwt.reset_pass_token, {
+        expiresIn: "10m",
+    });
+    const resetUILink = `http://localhost:3000/reset-pass?id=${user.email}&token=${resetToken}`;
+    console.log(resetUILink);
+    (0, sendMail_1.sendEmail)(user === null || user === void 0 ? void 0 : user.email, resetUILink);
+});
+const resetPassword = (payload, token) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(payload.email);
+    const user = yield prisma_1.default.user.findUnique({
+        where: {
+            email: payload.email,
+        },
+    });
+    if (!user) {
+        throw new AppError_1.default(404, "This user is not found ");
+    }
+    if (!token) {
+        throw new AppError_1.default(403, "you are forbidden");
+    }
+    const decoded = jsonwebtoken_1.default.verify(token, config_1.default.jwt.reset_pass_token);
+    console.log("decoded id", decoded.email);
+    if (payload.email !== decoded.email) {
+        throw new AppError_1.default(401, "Your are forbidden");
+    }
+    const newHashedPassword = yield bcrypt_1.default.hash(payload.newPassword, 7);
+    const result = yield prisma_1.default.user.update({
+        where: {
+            email: decoded.email,
+            role: decoded.role,
+        },
+        data: {
+            password: newHashedPassword,
+        },
+    });
+});
 exports.AuthServices = {
     loginUser,
-    changePassword
+    changePassword,
+    forgetPassword,
+    resetPassword,
 };

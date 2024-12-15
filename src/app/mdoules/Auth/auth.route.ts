@@ -5,7 +5,13 @@ import { Role } from "@prisma/client";
 
 const router = express.Router();
 
-router.post("/login",  AuthController.loginUser);
-router.post("/change-password", auth(Role.user,Role.admin,Role.vendor), AuthController.changePassword);
+router.post("/login", AuthController.loginUser);
+router.post(
+  "/change-password",
+  auth(Role.user, Role.admin, Role.vendor),
+  AuthController.changePassword
+);
+router.post("/forget-password", AuthController.forgetPassword);
+router.post("/reset-password", AuthController.resetPassword);
 
 export const AuthRoutes = router;

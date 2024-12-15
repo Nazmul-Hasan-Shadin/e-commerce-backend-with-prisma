@@ -34,6 +34,15 @@ const getCategory = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, vo
         data: result,
     });
 }));
+const getCategoryById = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield categroy_services_1.CategoryServices.getCategoryById(req.params.id);
+    (0, sendResponse_1.default)(res, {
+        statusCode: 200,
+        success: true,
+        message: "Category is retrived succesful",
+        data: result,
+    });
+}));
 const updateCategory = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { categoryId } = req.params;
     const { name, description } = req.body;
@@ -63,4 +72,5 @@ exports.CategoryController = {
     updateCategory,
     deleteCategory,
     getCategory,
+    getCategoryById,
 };
