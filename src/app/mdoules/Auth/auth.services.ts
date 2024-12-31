@@ -101,7 +101,7 @@ const forgetPassword = async (id: string) => {
     }
   );
 
-  const resetUILink = `http://localhost:3000/reset-pass?id=${user.email}&token=${resetToken}`;
+  const resetUILink = `https://e-commerce-frontend-beryl-nu.vercel.app/reset-pass?id=${user.email}&token=${resetToken}`;
   console.log(resetUILink);
 
   sendEmail(user?.email, resetUILink);

@@ -24,7 +24,18 @@ const shopById = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const getTopTenShop = catchAsync(async (req, res) => {
+  const result = await shopServices.getTopTenShop();
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "shop are retrived succesful",
+    data: result,
+  });
+});
 export const ShopController = {
   createShop,
   shopById,
+  getTopTenShop,
 };

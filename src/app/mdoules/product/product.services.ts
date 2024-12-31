@@ -5,10 +5,15 @@ import { Request } from "express";
 import { fileUpload } from "../../../utils/fileUploader";
 
 const getAllProduct = async (filters: any) => {
-  const { searchTerm, isFlash, categoryName, ...filterData } = filters;
-  console.log(filters, "iam filters");
+  const { searchTerm, categoryFilter, isFlash, categoryName, ...filterData } =
+    filters;
 
-  console.log(categoryName, "iam category name");
+  let categoryFilterArray = [];
+  if (categoryFilter) {
+    categoryFilterArray = categoryFilter.split(",");
+  }
+
+  console.log(categoryFilterArray, "holo");
 
   let category;
   if (categoryName) {
@@ -18,6 +23,7 @@ const getAllProduct = async (filters: any) => {
       },
     });
   }
+  console.log("iam category", category);
 
   const andCondition: Prisma.ProductWhereInput[] = [];
   if (searchTerm) {
@@ -47,13 +53,19 @@ const getAllProduct = async (filters: any) => {
     });
   }
 
-  if (categoryName) {
+  if (categoryFilterArray.length > 0) {
     andCondition.push({
       category: {
         name: {
-          contains: category?.name,
-          mode: "insensitive",
+          in: categoryFilterArray,
         },
+      },
+    });
+  }
+  if (categoryName && category) {
+    andCondition.push({
+      category: {
+        id: category.id, // Use categoryId to filter products
       },
     });
   }
@@ -63,6 +75,9 @@ const getAllProduct = async (filters: any) => {
 
   const result = await prisma.product.findMany({
     where: whereCondition,
+    include: {
+      category: true,
+    },
   });
 
   return result;

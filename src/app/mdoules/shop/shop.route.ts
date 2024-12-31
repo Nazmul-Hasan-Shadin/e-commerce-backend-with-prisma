@@ -6,6 +6,8 @@ import { fileUpload } from "../../../utils/fileUploader";
 
 const router = express();
 
+router.get("/", ShopController.getTopTenShop);
+
 router.get("/:id", ShopController.shopById);
 
 router.post(

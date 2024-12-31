@@ -79,7 +79,7 @@ const forgetPassword = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const resetToken = jsonwebtoken_1.default.sign(jwtPayload, config_1.default.jwt.reset_pass_token, {
         expiresIn: "10m",
     });
-    const resetUILink = `http://localhost:3000/reset-pass?id=${user.email}&token=${resetToken}`;
+    const resetUILink = `https://e-commerce-frontend-beryl-nu.vercel.app/reset-pass?id=${user.email}&token=${resetToken}`;
     console.log(resetUILink);
     (0, sendMail_1.sendEmail)(user === null || user === void 0 ? void 0 : user.email, resetUILink);
 });

@@ -16,6 +16,11 @@ const createShop = async (req: Request) => {
   return newShop;
 };
 
+const getTopTenShop = async () => {
+  const result = await prisma.shop.findMany({});
+  return result;
+};
+
 const getShopById = async (shopId: string) => {
   const result = await prisma.shop.findUnique({
     where: {
@@ -30,4 +35,5 @@ const getShopById = async (shopId: string) => {
 export const shopServices = {
   createShop,
   getShopById,
+  getTopTenShop,
 };
