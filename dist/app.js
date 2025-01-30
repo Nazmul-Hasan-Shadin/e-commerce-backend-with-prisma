@@ -10,8 +10,8 @@ const globalError_1 = __importDefault(require("./middleware/globalError"));
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)({
     origin: [
-        "http://localhost:3000",
         "https://e-commerce-frontend-beryl-nu.vercel.app",
+        "http://localhost:3000",
     ],
     credentials: true,
 }));

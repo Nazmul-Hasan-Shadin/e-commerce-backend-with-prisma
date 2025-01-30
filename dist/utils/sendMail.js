@@ -31,6 +31,5 @@ const sendEmail = (to, html) => __awaiter(void 0, void 0, void 0, function* () {
         text: "whats up ! Reset your password to save your life?", // plain text body
         html,
     });
-    console.log("done mail sent");
 });
 exports.sendEmail = sendEmail;

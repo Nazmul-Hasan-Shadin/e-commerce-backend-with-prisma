@@ -9,7 +9,7 @@ router.get("/shop/products/:shopId", ProductController.getProductByShopId);
 
 router.post(
   "/create-product",
-  fileUpload.multerUpload.single("file"),
+  fileUpload.multerUpload.array("files"),
   (req: Request, res: Response, next: NextFunction) => {
     (req.body = JSON.parse(req.body.data)),
       ProductController.createProductIntoDb(req, res, next);

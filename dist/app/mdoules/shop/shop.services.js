@@ -26,6 +26,10 @@ const createShop = (req) => __awaiter(void 0, void 0, void 0, function* () {
     });
     return newShop;
 });
+const getTopTenShop = () => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield prisma_1.default.shop.findMany({});
+    return result;
+});
 const getShopById = (shopId) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield prisma_1.default.shop.findUnique({
         where: {
@@ -40,4 +44,5 @@ const getShopById = (shopId) => __awaiter(void 0, void 0, void 0, function* () {
 exports.shopServices = {
     createShop,
     getShopById,
+    getTopTenShop,
 };

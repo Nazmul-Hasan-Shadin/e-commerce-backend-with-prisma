@@ -8,7 +8,6 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { sendEmail } from "../../../utils/sendMail";
 
 const loginUser = async (payload: { email: string; password: string }) => {
-  console.log(payload);
   const userData = await prisma.user.findUniqueOrThrow({
     where: {
       email: payload.email,
@@ -83,8 +82,6 @@ const forgetPassword = async (id: string) => {
     },
   });
 
-  console.log(user, "chage pass user");
-
   const userStatus = user?.status;
 
   if (!user) {
@@ -102,7 +99,6 @@ const forgetPassword = async (id: string) => {
   );
 
   const resetUILink = `https://e-commerce-frontend-beryl-nu.vercel.app/reset-pass?id=${user.email}&token=${resetToken}`;
-  console.log(resetUILink);
 
   sendEmail(user?.email, resetUILink);
 };
@@ -131,7 +127,6 @@ const resetPassword = async (
     token,
     config.jwt.reset_pass_token as string
   ) as JwtPayload;
-  console.log("decoded id", decoded.email);
 
   if (payload.email !== decoded.email) {
     throw new AppError(401, "Your are forbidden");

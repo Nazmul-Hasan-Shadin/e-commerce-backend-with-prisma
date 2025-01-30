@@ -31,7 +31,6 @@ exports.checkFollowValidity = (0, catchAsync_1.default)((req, res) => __awaiter(
     const { shopId } = req.body;
     const user = req.user;
     const isFollowing = yield shopFollow_services_1.FollowerServices.checkValidityOfFollow(user, shopId);
-    console.log(isFollowing, "isFollowing");
     if (isFollowing) {
         (0, sendResponse_1.default)(res, {
             statusCode: 200,

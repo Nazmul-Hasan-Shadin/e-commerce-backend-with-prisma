@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PaymentServices = void 0;
 const payment_const_1 = __importDefault(require("./payment.const"));
 const createPaymentIntend = (price) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("iam backend price");
     const priceamount = Math.round(price * 100);
     const paymentIntent = yield payment_const_1.default.paymentIntents.create({
         amount: priceamount,

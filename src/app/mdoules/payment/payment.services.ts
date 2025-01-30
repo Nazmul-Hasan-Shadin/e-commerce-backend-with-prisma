@@ -1,8 +1,6 @@
 import stripe from "./payment.const";
 
 const createPaymentIntend = async (price: number) => {
-  console.log("iam backend price");
-
   const priceamount = Math.round(price * 100);
   const paymentIntent = await stripe.paymentIntents.create({
     amount: priceamount,

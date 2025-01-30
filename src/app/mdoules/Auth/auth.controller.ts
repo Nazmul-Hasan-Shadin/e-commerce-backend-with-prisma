@@ -11,8 +11,11 @@ const loginUser = catchAsync(async (req, res) => {
   const { refreshtoken } = result;
 
   res.cookie("refreshToken", refreshtoken, {
-    httpOnly: true,
     secure: false,
+    httpOnly: true,
+
+    // domain: "e-commerce-inky-alpha.vercel.app",
+    // path: "/",
   });
 
   sendResponse(res, {
@@ -28,8 +31,6 @@ const loginUser = catchAsync(async (req, res) => {
 const changePassword = catchAsync(
   async (req: Request & { user?: IAuthUser }, res) => {
     const user = req.user;
-
-    console.log(req.user);
 
     const result = await AuthServices.changePassword(user, req.body);
 

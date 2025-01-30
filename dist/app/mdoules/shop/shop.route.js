@@ -10,6 +10,7 @@ const auth_1 = __importDefault(require("../Auth/auth"));
 const client_1 = require("@prisma/client");
 const fileUploader_1 = require("../../../utils/fileUploader");
 const router = (0, express_1.default)();
+router.get("/", shop_controller_1.ShopController.getTopTenShop);
 router.get("/:id", shop_controller_1.ShopController.shopById);
 router.post("/create-shop", fileUploader_1.fileUpload.multerUpload.single("file"), (0, auth_1.default)(client_1.Role.vendor, client_1.Role.admin), (req, res, next) => {
     (req.body = JSON.parse(req.body.data)),

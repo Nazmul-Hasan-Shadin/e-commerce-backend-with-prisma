@@ -24,7 +24,6 @@ const followShop = (user, shopId) => __awaiter(void 0, void 0, void 0, function*
             shopFollower: true,
         },
     });
-    console.log(existingUser, "iedfjdkfjkd");
     if (!existingUser) {
         throw new Error("User not found");
     }
@@ -77,7 +76,6 @@ const unfollowShop = (user, shopId) => __awaiter(void 0, void 0, void 0, functio
         throw new Error("User not found");
     }
     const userId = existingUser === null || existingUser === void 0 ? void 0 : existingUser.id;
-    console.log("iam enterd ", userId, shopId);
     // const followerRecord = existingUser.shopFollower?.find(
     //   (follower) => follower.shopId === shopId
     // );

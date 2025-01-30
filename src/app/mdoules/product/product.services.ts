@@ -13,8 +13,6 @@ const getAllProduct = async (filters: any) => {
     categoryFilterArray = categoryFilter.split(",");
   }
 
-  console.log(categoryFilterArray, "holo");
-
   let category;
   if (categoryName) {
     category = await prisma.category.findUnique({
@@ -23,7 +21,6 @@ const getAllProduct = async (filters: any) => {
       },
     });
   }
-  console.log("iam category", category);
 
   const andCondition: Prisma.ProductWhereInput[] = [];
   if (searchTerm) {
@@ -105,11 +102,17 @@ const getProductByShopId = async (shopId: string) => {
 };
 
 const createProduct = async (req: Request) => {
-  if (req.file) {
-    req.body.images = req?.file.path;
-  }
+  console.log(req.file, "iam file bro");
+  console.log(req.files, "iam files bro");
 
-  console.log(req.body, "iam file");
+  if (req.files) {
+    const imagePaths = Array.isArray(req.files)
+      ? req.files.map((file: any) => file.path)
+      : req.files
+      ? [req.files.path]
+      : [];
+    req.body.images = imagePaths;
+  }
 
   const result = await prisma.product.create({
     data: req.body,

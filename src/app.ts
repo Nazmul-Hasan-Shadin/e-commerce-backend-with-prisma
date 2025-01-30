@@ -8,8 +8,8 @@ const app: Application = express();
 app.use(
   cors({
     origin: [
-      "http://localhost:3000",
       "https://e-commerce-frontend-beryl-nu.vercel.app",
+      "http://localhost:3000",
     ],
     credentials: true,
   })

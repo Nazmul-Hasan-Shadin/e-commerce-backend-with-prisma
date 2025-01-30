@@ -26,7 +26,6 @@ const createProductIntoDb = (0, catchAsync_1.default)((req, res, next) => __awai
     });
 }));
 const getAllProduct = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(req.query, "fuckd paruey");
     const result = yield product_services_1.ProductServices.getAllProduct(req.query);
     (0, sendResponse_1.default)(res, {
         statusCode: 200,

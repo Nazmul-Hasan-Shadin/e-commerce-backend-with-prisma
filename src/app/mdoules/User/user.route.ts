@@ -10,6 +10,11 @@ router.get(
   auth(Role.admin, Role.user, Role.vendor),
   UserController.getCurrentUser
 );
+router.get(
+  "/all-user",
+
+  UserController.getallUser
+);
 router.post("/register", UserController.createUserIntoDb);
 
 export const UserRoutes = router;

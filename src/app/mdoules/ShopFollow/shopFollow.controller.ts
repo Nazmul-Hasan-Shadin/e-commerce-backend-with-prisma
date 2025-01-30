@@ -32,7 +32,6 @@ export const checkFollowValidity = catchAsync(
       user,
       shopId
     );
-    console.log(isFollowing, "isFollowing");
 
     if (isFollowing) {
       sendResponse(res, {

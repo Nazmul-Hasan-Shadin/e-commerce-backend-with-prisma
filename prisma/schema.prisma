@@ -4,14 +4,14 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
-generator client {
-  provider = "prisma-client-js"
-}
+// generator client {
+//   provider = "prisma-client-js"
+// }
 
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
+// datasource db {
+//   provider = "postgresql"
+//   url      = env("DATABASE_URL")
+// }
 
 
 
@@ -20,15 +20,15 @@ datasource db {
 
 
    
-// generator client {
-//   provider = "prisma-client-js"
-// }
+generator client {
+  provider = "prisma-client-js"
+}
 
-// datasource db {
-//   provider  = "postgresql"
-//   url       = env("DATABASE_URL")
-//   directUrl = env("DIRECT_URL")
-// }
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
         
 
 
@@ -50,10 +50,12 @@ model User {
   email     String   @unique
   password  String
   role      Role @default(user)
+  extra String ?
   status UserStatus @default(active)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   Order Order[]
+
 
   review Review[]
 
@@ -89,7 +91,7 @@ model Product {
   categoryId        String
   inventoryCount  Int      @default(0)
   discount        Float    @default(0.0) 
-  images          String
+  images          String[]
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   shop             Shop  @relation(fields: [shopId], references: [id])
@@ -175,6 +177,7 @@ enum Role {
   admin
   vendor
   user
+  test
 }
 
 enum UserStatus {

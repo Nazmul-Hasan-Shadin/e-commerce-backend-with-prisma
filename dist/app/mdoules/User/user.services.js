@@ -17,7 +17,6 @@ const prisma_1 = __importDefault(require("../../../utils/prisma"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const createUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const hashedPassword = yield bcrypt_1.default.hash(payload.password, 12);
-    console.log(hashedPassword);
     const result = prisma_1.default.user.create({
         data: Object.assign(Object.assign({}, payload), { password: hashedPassword }),
     });
@@ -34,10 +33,14 @@ const getUserByEmail = (userInfo) => __awaiter(void 0, void 0, void 0, function*
             shopFollower: true,
         },
     });
-    console.log("sir ", user);
+    return user;
+});
+const getAllUser = () => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield prisma_1.default.user.findMany({});
     return user;
 });
 exports.UserServices = {
     createUser,
     getUserByEmail,
+    getAllUser,
 };

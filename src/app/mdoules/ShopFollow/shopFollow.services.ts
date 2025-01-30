@@ -10,8 +10,6 @@ const followShop = async (user: any, shopId: string) => {
     },
   });
 
-  console.log(existingUser, "iedfjdkfjkd");
-
   if (!existingUser) {
     throw new Error("User not found");
   }
@@ -75,7 +73,6 @@ const unfollowShop = async (user: any, shopId: string) => {
   }
 
   const userId = existingUser?.id;
-  console.log("iam enterd ", userId, shopId);
 
   // const followerRecord = existingUser.shopFollower?.find(
   //   (follower) => follower.shopId === shopId

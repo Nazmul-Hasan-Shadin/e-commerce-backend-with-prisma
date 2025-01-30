@@ -4,7 +4,6 @@ import bcrypt from "bcrypt";
 
 const createUser = async (payload: any) => {
   const hashedPassword: string = await bcrypt.hash(payload.password, 12);
-  console.log(hashedPassword);
 
   const result = prisma.user.create({
     data: {
@@ -28,7 +27,10 @@ const getUserByEmail = async (userInfo: any): Promise<User | null> => {
     },
   });
 
-  console.log("sir ", user);
+  return user;
+};
+const getAllUser = async () => {
+  const user = await prisma.user.findMany({});
 
   return user;
 };
@@ -36,4 +38,5 @@ const getUserByEmail = async (userInfo: any): Promise<User | null> => {
 export const UserServices = {
   createUser,
   getUserByEmail,
+  getAllUser,
 };

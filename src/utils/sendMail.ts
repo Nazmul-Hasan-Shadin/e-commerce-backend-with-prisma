@@ -18,5 +18,4 @@ export const sendEmail = async (to: string, html: string) => {
     text: "whats up ! Reset your password to save your life?", // plain text body
     html,
   });
-  console.log("done mail sent");
 };

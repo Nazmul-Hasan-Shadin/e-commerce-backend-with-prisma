@@ -20,8 +20,10 @@ const loginUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void
     const result = yield auth_services_1.AuthServices.loginUser(req.body);
     const { refreshtoken } = result;
     res.cookie("refreshToken", refreshtoken, {
-        httpOnly: true,
         secure: false,
+        httpOnly: true,
+        // domain: "e-commerce-inky-alpha.vercel.app",
+        // path: "/",
     });
     (0, sendResponse_1.default)(res, {
         statusCode: 200,
@@ -34,7 +36,6 @@ const loginUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void
 }));
 const changePassword = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = req.user;
-    console.log(req.user);
     const result = yield auth_services_1.AuthServices.changePassword(user, req.body);
     (0, sendResponse_1.default)(res, {
         statusCode: 200,

@@ -34,7 +34,17 @@ const getCurrentUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0,
         data: result,
     });
 }));
+const getallUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield user_services_1.UserServices.getAllUser();
+    (0, sendResponse_1.default)(res, {
+        statusCode: 200,
+        success: true,
+        message: "users are fetched succesful",
+        data: result,
+    });
+}));
 exports.UserController = {
     createUserIntoDb,
     getCurrentUser,
+    getallUser,
 };

@@ -26,9 +26,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductServices = void 0;
 const prisma_1 = __importDefault(require("../../../utils/prisma"));
 const getAllProduct = (filters) => __awaiter(void 0, void 0, void 0, function* () {
-    const { searchTerm, isFlash, categoryName } = filters, filterData = __rest(filters, ["searchTerm", "isFlash", "categoryName"]);
-    console.log(filters, "iam filters");
-    console.log(categoryName, "iam category name");
+    const { searchTerm, categoryFilter, isFlash, categoryName } = filters, filterData = __rest(filters, ["searchTerm", "categoryFilter", "isFlash", "categoryName"]);
+    let categoryFilterArray = [];
+    if (categoryFilter) {
+        categoryFilterArray = categoryFilter.split(",");
+    }
     let category;
     if (categoryName) {
         category = yield prisma_1.default.category.findUnique({
@@ -61,19 +63,28 @@ const getAllProduct = (filters) => __awaiter(void 0, void 0, void 0, function* (
             isFlash: isFlash === "true",
         });
     }
-    if (categoryName) {
+    if (categoryFilterArray.length > 0) {
         andCondition.push({
             category: {
                 name: {
-                    contains: category === null || category === void 0 ? void 0 : category.name,
-                    mode: "insensitive",
+                    in: categoryFilterArray,
                 },
+            },
+        });
+    }
+    if (categoryName && category) {
+        andCondition.push({
+            category: {
+                id: category.id, // Use categoryId to filter products
             },
         });
     }
     const whereCondition = andCondition.length > 0 ? { AND: andCondition } : {};
     const result = yield prisma_1.default.product.findMany({
         where: whereCondition,
+        include: {
+            category: true,
+        },
     });
     return result;
 });
@@ -97,10 +108,16 @@ const getProductByShopId = (shopId) => __awaiter(void 0, void 0, void 0, functio
     return result;
 });
 const createProduct = (req) => __awaiter(void 0, void 0, void 0, function* () {
-    if (req.file) {
-        req.body.images = req === null || req === void 0 ? void 0 : req.file.path;
+    console.log(req.file, "iam file bro");
+    console.log(req.files, "iam files bro");
+    if (req.files) {
+        const imagePaths = Array.isArray(req.files)
+            ? req.files.map((file) => file.path)
+            : req.files
+                ? [req.files.path]
+                : [];
+        req.body.images = imagePaths;
     }
-    console.log(req.body, "iam file");
     const result = yield prisma_1.default.product.create({
         data: req.body,
     });
