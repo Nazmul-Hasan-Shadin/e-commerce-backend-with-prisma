@@ -4,13 +4,15 @@ import bcrypt from "bcrypt";
 import { Request } from "express";
 import { fileUpload } from "../../../utils/fileUploader";
 
-const getAllProduct = async (filters: any) => {
-  const { searchTerm, categoryFilter, isFlash, categoryName, ...filterData } =
+const getAllProduct = async (filters: any, options: any) => {
+  const { searchTerm, brandFilter, isFlash, categoryName, ...filterData } =
     filters;
+  //categoryName dea dropdown dea direct search kora jai
+  console.log({ searchTerm, brandFilter, isFlash, categoryName, filterData });
 
-  let categoryFilterArray = [];
-  if (categoryFilter) {
-    categoryFilterArray = categoryFilter.split(",");
+  let brandFilterByArray = [];
+  if (brandFilter) {
+    brandFilterByArray = brandFilter.split(",");
   }
 
   let category;
@@ -26,6 +28,7 @@ const getAllProduct = async (filters: any) => {
   if (searchTerm) {
     andCondition.push({
       OR: ["name", "description"].map((field) => ({
+        //[{OR:[{email:''}]}, {name:'shadin',eamil:'bul'}]
         [field]: {
           contains: searchTerm,
           mode: "insensitive",
@@ -33,8 +36,24 @@ const getAllProduct = async (filters: any) => {
       })),
     });
   }
+  const filteredPureQuery = {
+    ...options
+  };
 
-  if (Object.keys(filterData).length > 0) {
+  const excludePaginationParameterFromQuery: string[] = [
+    "limit",
+    "page",
+    "orderBy",
+    "sortBy",
+  ];
+
+  for (const key of excludePaginationParameterFromQuery) {
+      delete filteredPureQuery[key]
+  }
+
+  
+
+  if (Object.keys(filteredPureQuery).length > 0) {
     const filterCondition = Object.keys(filterData).map((key) => ({
       [key]: {
         equals: filterData[key],
@@ -50,11 +69,11 @@ const getAllProduct = async (filters: any) => {
     });
   }
 
-  if (categoryFilterArray.length > 0) {
+  if (brandFilterByArray.length > 0) {
     andCondition.push({
       category: {
         name: {
-          in: categoryFilterArray,
+          in: brandFilterByArray,
         },
       },
     });
@@ -69,15 +88,35 @@ const getAllProduct = async (filters: any) => {
 
   const whereCondition: Prisma.ProductWhereInput =
     andCondition.length > 0 ? { AND: andCondition } : {};
+  
+  
+  //pagination options
+  let limit = Number(options.limit) || 5;
+  let page = Number(options.page) || 1;
+  console.log(options,'options');
 
   const result = await prisma.product.findMany({
     where: whereCondition,
     include: {
       category: true,
     },
+    skip: (page - 1) * limit,
+    orderBy:options.sortBy && options.orderBy ? {
+    [options.sortBy]:options.orderBy
+    }: {
+      createdAt:'asc'
+    },
+    take: limit,
   });
-
-  return result;
+  const total = await prisma.product.count({ where: whereCondition });
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    data: result,
+  };
 };
 
 const getSingleProduct = async (productId: string) => {
@@ -102,9 +141,6 @@ const getProductByShopId = async (shopId: string) => {
 };
 
 const createProduct = async (req: Request) => {
-  console.log(req.file, "iam file bro");
-  console.log(req.files, "iam files bro");
-
   if (req.files) {
     const imagePaths = Array.isArray(req.files)
       ? req.files.map((file: any) => file.path)

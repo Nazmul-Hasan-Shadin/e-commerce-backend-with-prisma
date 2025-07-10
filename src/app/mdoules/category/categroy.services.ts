@@ -50,6 +50,7 @@ const deleteCategory = async (categoryId: string) => {
     where: {
       id: categoryId,
     },
+    
   });
 
   return { message: "Category deleted successfully" };
