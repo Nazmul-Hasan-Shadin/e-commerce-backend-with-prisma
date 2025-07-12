@@ -4,6 +4,11 @@ import bcrypt from "bcrypt";
 import { Request } from "express";
 import { fileUpload } from "../../../utils/fileUploader";
 
+interface IFilterQuery {
+  limit: number,
+  page:number
+}
+
 const getAllProduct = async (filters: any, options: any) => {
   const { searchTerm, brandFilter, isFlash, categoryName, ...filterData } =
     filters;
@@ -137,7 +142,7 @@ const getSingleProduct = async (productId: string) => {
   return result;
 };
 
-const getProductByShopId = async (shopId: string, filterQuery) => {
+const getProductByShopId = async (shopId: string, filterQuery:Record<string ,unknown>) => {
   const limit = Number(filterQuery.limit) || 16;
   const page = Number(filterQuery.page) || 1;
 

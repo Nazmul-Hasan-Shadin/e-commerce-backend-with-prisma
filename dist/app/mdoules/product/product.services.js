@@ -25,12 +25,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductServices = void 0;
 const prisma_1 = __importDefault(require("../../../utils/prisma"));
-const getAllProduct = (filters) => __awaiter(void 0, void 0, void 0, function* () {
-    const { searchTerm, categoryFilter, isFlash, categoryName } = filters, filterData = __rest(filters, ["searchTerm", "categoryFilter", "isFlash", "categoryName"]);
-    let categoryFilterArray = [];
-    if (categoryFilter) {
-        categoryFilterArray = categoryFilter.split(",");
+const getAllProduct = (filters, options) => __awaiter(void 0, void 0, void 0, function* () {
+    const { searchTerm, brandFilter, isFlash, categoryName } = filters, filterData = __rest(filters, ["searchTerm", "brandFilter", "isFlash", "categoryName"]);
+    //categoryName dea dropdown dea direct search kora jai
+    console.log({ searchTerm, brandFilter, isFlash, categoryName, filterData });
+    let brandFilterByArray = [];
+    if (brandFilter) {
+        brandFilterByArray = brandFilter.split(",");
     }
+    console.log(brandFilterByArray);
     let category;
     if (categoryName) {
         category = yield prisma_1.default.category.findUnique({
@@ -39,10 +42,12 @@ const getAllProduct = (filters) => __awaiter(void 0, void 0, void 0, function* (
             },
         });
     }
+    console.log(category, "paisi");
     const andCondition = [];
     if (searchTerm) {
         andCondition.push({
             OR: ["name", "description"].map((field) => ({
+                //[{OR:[{email:''}]}, {name:'shadin',eamil:'bul'}]
                 [field]: {
                     contains: searchTerm,
                     mode: "insensitive",
@@ -50,10 +55,23 @@ const getAllProduct = (filters) => __awaiter(void 0, void 0, void 0, function* (
             })),
         });
     }
-    if (Object.keys(filterData).length > 0) {
-        const filterCondition = Object.keys(filterData).map((key) => ({
+    const filteredPureQuery = Object.assign({}, options);
+    const excludePaginationParameterFromQuery = [
+        "limit",
+        "page",
+        "orderBy",
+        "sortBy",
+        "categoryName",
+        "brandFilter",
+        "isFlash",
+    ];
+    for (const key of excludePaginationParameterFromQuery) {
+        delete filteredPureQuery[key];
+    }
+    if (Object.keys(filteredPureQuery).length > 0) {
+        const filterCondition = Object.keys(filteredPureQuery).map((key) => ({
             [key]: {
-                equals: filterData[key],
+                equals: filteredPureQuery[key],
             },
         }));
         andCondition.push(...filterCondition);
@@ -63,11 +81,11 @@ const getAllProduct = (filters) => __awaiter(void 0, void 0, void 0, function* (
             isFlash: isFlash === "true",
         });
     }
-    if (categoryFilterArray.length > 0) {
+    if (brandFilterByArray.length > 0) {
         andCondition.push({
             category: {
                 name: {
-                    in: categoryFilterArray,
+                    in: brandFilterByArray,
                 },
             },
         });
@@ -75,18 +93,38 @@ const getAllProduct = (filters) => __awaiter(void 0, void 0, void 0, function* (
     if (categoryName && category) {
         andCondition.push({
             category: {
-                id: category.id, // Use categoryId to filter products
+                id: categoryName, // Use categoryId to filter products
             },
         });
     }
     const whereCondition = andCondition.length > 0 ? { AND: andCondition } : {};
+    //pagination options
+    let limit = Number(options.limit) || 12;
+    let page = Number(options.page) || 1;
     const result = yield prisma_1.default.product.findMany({
         where: whereCondition,
         include: {
             category: true,
         },
+        skip: (page - 1) * limit,
+        orderBy: options.sortBy && options.orderBy
+            ? {
+                [options.sortBy]: options.orderBy,
+            }
+            : {
+                createdAt: "asc",
+            },
+        take: limit,
     });
-    return result;
+    const total = yield prisma_1.default.product.count({ where: whereCondition });
+    return {
+        meta: {
+            page,
+            limit,
+            total,
+        },
+        data: result,
+    };
 });
 const getSingleProduct = (productId) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield prisma_1.default.product.findUniqueOrThrow({
@@ -101,15 +139,29 @@ const getSingleProduct = (productId) => __awaiter(void 0, void 0, void 0, functi
     });
     return result;
 });
-const getProductByShopId = (shopId) => __awaiter(void 0, void 0, void 0, function* () {
+const getProductByShopId = (shopId, filterQuery) => __awaiter(void 0, void 0, void 0, function* () {
+    const limit = Number(filterQuery.limit) || 16;
+    const page = Number(filterQuery.page) || 1;
     const result = yield prisma_1.default.product.findMany({
         where: { shopId: shopId },
+        skip: (page - 1) / limit,
+        take: limit,
     });
-    return result;
+    const total = yield prisma_1.default.product.count({
+        where: {
+            shopId,
+        },
+    });
+    return {
+        meta: {
+            limit,
+            page,
+            total
+        },
+        data: result
+    };
 });
 const createProduct = (req) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(req.file, "iam file bro");
-    console.log(req.files, "iam files bro");
     if (req.files) {
         const imagePaths = Array.isArray(req.files)
             ? req.files.map((file) => file.path)

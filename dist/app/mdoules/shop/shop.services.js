@@ -27,7 +27,11 @@ const createShop = (req) => __awaiter(void 0, void 0, void 0, function* () {
     return newShop;
 });
 const getTopTenShop = () => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield prisma_1.default.shop.findMany({});
+    const result = yield prisma_1.default.shop.findMany({
+        include: {
+            product: true
+        }
+    });
     return result;
 });
 const getShopById = (shopId) => __awaiter(void 0, void 0, void 0, function* () {

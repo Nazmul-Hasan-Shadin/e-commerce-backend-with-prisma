@@ -26,11 +26,12 @@ const createProductIntoDb = (0, catchAsync_1.default)((req, res, next) => __awai
     });
 }));
 const getAllProduct = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield product_services_1.ProductServices.getAllProduct(req.query);
+    const query = req.query;
+    const result = yield product_services_1.ProductServices.getAllProduct(query, query);
     (0, sendResponse_1.default)(res, {
         statusCode: 200,
         success: true,
-        message: "Product are fetch succesful",
+        message: "Product are fetch successfully",
         data: result,
     });
 }));
@@ -44,7 +45,7 @@ const getSingleProduct = (0, catchAsync_1.default)((req, res, next) => __awaiter
     });
 }));
 const getProductByShopId = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield product_services_1.ProductServices.getProductByShopId(req.params.shopId);
+    const result = yield product_services_1.ProductServices.getProductByShopId(req.params.shopId, req.query);
     (0, sendResponse_1.default)(res, {
         statusCode: 200,
         success: true,
