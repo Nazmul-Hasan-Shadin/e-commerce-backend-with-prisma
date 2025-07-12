@@ -36,7 +36,7 @@ const getSingleProduct = catchAsync(async (req, res, next) => {
 });
 
 const getProductByShopId = catchAsync(async (req, res, next) => {
-  const result = await ProductServices.getProductByShopId(req.params.shopId);
+  const result = await ProductServices.getProductByShopId(req.params.shopId,req.query);
 
   sendResponse(res, {
     statusCode: 200,

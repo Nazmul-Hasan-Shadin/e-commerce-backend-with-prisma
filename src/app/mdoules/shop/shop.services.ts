@@ -17,7 +17,11 @@ const createShop = async (req: Request) => {
 };
 
 const getTopTenShop = async () => {
-  const result = await prisma.shop.findMany({});
+  const result = await prisma.shop.findMany({
+       include:{
+         product:true
+       }
+  });
   return result;
 };
 

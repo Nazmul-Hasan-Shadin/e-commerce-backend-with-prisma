@@ -14,6 +14,7 @@ const getAllProduct = async (filters: any, options: any) => {
   if (brandFilter) {
     brandFilterByArray = brandFilter.split(",");
   }
+  console.log(brandFilterByArray);
 
   let category;
   if (categoryName) {
@@ -23,6 +24,7 @@ const getAllProduct = async (filters: any, options: any) => {
       },
     });
   }
+  console.log(category, "paisi");
 
   const andCondition: Prisma.ProductWhereInput[] = [];
   if (searchTerm) {
@@ -37,7 +39,7 @@ const getAllProduct = async (filters: any, options: any) => {
     });
   }
   const filteredPureQuery = {
-    ...options
+    ...options,
   };
 
   const excludePaginationParameterFromQuery: string[] = [
@@ -45,18 +47,19 @@ const getAllProduct = async (filters: any, options: any) => {
     "page",
     "orderBy",
     "sortBy",
+    "categoryName",
+    "brandFilter",
+    "isFlash",
   ];
 
   for (const key of excludePaginationParameterFromQuery) {
-      delete filteredPureQuery[key]
+    delete filteredPureQuery[key];
   }
 
-  
-
   if (Object.keys(filteredPureQuery).length > 0) {
-    const filterCondition = Object.keys(filterData).map((key) => ({
+    const filterCondition = Object.keys(filteredPureQuery).map((key) => ({
       [key]: {
-        equals: filterData[key],
+        equals: filteredPureQuery[key],
       },
     }));
 
@@ -81,19 +84,17 @@ const getAllProduct = async (filters: any, options: any) => {
   if (categoryName && category) {
     andCondition.push({
       category: {
-        id: category.id, // Use categoryId to filter products
+        id: categoryName, // Use categoryId to filter products
       },
     });
   }
 
   const whereCondition: Prisma.ProductWhereInput =
     andCondition.length > 0 ? { AND: andCondition } : {};
-  
-  
+
   //pagination options
-  let limit = Number(options.limit) || 5;
+  let limit = Number(options.limit) || 12;
   let page = Number(options.page) || 1;
-  console.log(options,'options');
 
   const result = await prisma.product.findMany({
     where: whereCondition,
@@ -101,11 +102,14 @@ const getAllProduct = async (filters: any, options: any) => {
       category: true,
     },
     skip: (page - 1) * limit,
-    orderBy:options.sortBy && options.orderBy ? {
-    [options.sortBy]:options.orderBy
-    }: {
-      createdAt:'asc'
-    },
+    orderBy:
+      options.sortBy && options.orderBy
+        ? {
+            [options.sortBy]: options.orderBy,
+          }
+        : {
+            createdAt: "asc",
+          },
     take: limit,
   });
   const total = await prisma.product.count({ where: whereCondition });
@@ -133,11 +137,28 @@ const getSingleProduct = async (productId: string) => {
   return result;
 };
 
-const getProductByShopId = async (shopId: string) => {
+const getProductByShopId = async (shopId: string, filterQuery) => {
+  const limit = Number(filterQuery.limit) || 16;
+  const page = Number(filterQuery.page) || 1;
+
   const result = await prisma.product.findMany({
     where: { shopId: shopId },
+    skip: (page - 1) / limit,
+    take: limit,
   });
-  return result;
+  const total = await prisma.product.count({
+    where: {
+      shopId,
+    },
+  });
+  return {
+    meta: {
+      limit,
+      page,
+      total
+    },
+    data:result
+  };
 };
 
 const createProduct = async (req: Request) => {
