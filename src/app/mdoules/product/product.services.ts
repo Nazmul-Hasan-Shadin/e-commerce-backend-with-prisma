@@ -263,6 +263,8 @@ const increaseViewCount = async (
     return;
   }
 
+  console.log('view is called');
+  
   await prisma.product.update({
     where: {
       id: productId,
@@ -275,6 +277,13 @@ const increaseViewCount = async (
   });
 };
 
+const getPopularProduct=async()=>{
+      const product= await prisma.product.findMany({
+        where:{
+          
+        }
+      })
+}
 
 
 const updateProduct = async (productId: string, payload: any) => {

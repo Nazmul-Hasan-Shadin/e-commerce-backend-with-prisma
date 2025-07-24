@@ -5,25 +5,38 @@ const createOrder = async (payload: any) => {
   const { shopId, customerId, totalAmount, orderItems } = payload;
 
   // Create the order and associated order items
-  const order = await prisma.order.create({
-    data: {
-      shopId,
-      customerId,
-      totalAmount,
-      orderItems: {
-        create: orderItems.map((item: any) => ({
-          productId: item.productId,
-          quantity: item.quantity,
-          price: item.price,
-        })),
+  return prisma.$transaction(async (tx) => {
+    const order = await tx.order.create({
+      data: {
+        shopId,
+        customerId,
+        totalAmount,
+        orderItems: {
+          create: orderItems.map((item: any) => ({
+            productId: item.productId,
+            quantity: item.quantity,
+            price: item.price,
+          })),
+        },
       },
-    },
-    include: {
-      orderItems: true,
-    },
-  });
+      include: {
+        orderItems: true,
+      },
+    });
 
-  return order;
+  await  Promise.all(
+      orderItems.map((order: any) =>
+        tx.product.update({
+          where: {
+            id: order.productId,
+          },
+          data: {
+            salesCount: { increment: 1 },
+          },
+        })
+      )
+    );
+  });
 };
 
 const getAllOrdersFromDB = async (user: IAuthUser) => {
