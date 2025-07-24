@@ -5,8 +5,8 @@ import { Request } from "express";
 import { fileUpload } from "../../../utils/fileUploader";
 
 interface IFilterQuery {
-  limit: number,
-  page:number
+  limit: number;
+  page: number;
 }
 
 const getAllProduct = async (filters: any, options: any) => {
@@ -29,7 +29,6 @@ const getAllProduct = async (filters: any, options: any) => {
       },
     });
   }
-  console.log(category, "paisi");
 
   const andCondition: Prisma.ProductWhereInput[] = [];
   if (searchTerm) {
@@ -139,10 +138,14 @@ const getSingleProduct = async (productId: string) => {
       },
     },
   });
+
   return result;
 };
 
-const getProductByShopId = async (shopId: string, filterQuery:Record<string ,unknown>) => {
+const getProductByShopId = async (
+  shopId: string,
+  filterQuery: Record<string, unknown>
+) => {
   const limit = Number(filterQuery.limit) || 16;
   const page = Number(filterQuery.page) || 1;
 
@@ -160,9 +163,9 @@ const getProductByShopId = async (shopId: string, filterQuery:Record<string ,unk
     meta: {
       limit,
       page,
-      total
+      total,
     },
-    data:result
+    data: result,
   };
 };
 
@@ -182,6 +185,97 @@ const createProduct = async (req: Request) => {
 
   return result;
 };
+
+const increaseViewCount = async (
+  productId: string,
+  userInfo: any,
+  ip: string,
+  userAgent: string
+) => {
+  console.log({ productId, userInfo, ip, userAgent });
+  const productExists = await prisma.product.findUnique({
+    where: { id: productId },
+  });
+
+  if (!productExists) {
+    throw new Error("Product not found");
+  }
+  if (Object.keys(userInfo).length > 0 && userInfo.email) {
+    const user = await prisma.user.findUniqueOrThrow({
+      where: {
+        email: userInfo.email,
+      },
+    });
+    const alreadyView = await prisma.productView.findUnique({
+      where: {
+        productId_userId: {
+          productId,
+          userId: user.id,
+        },
+      },
+    });
+    if (!alreadyView) {
+      await prisma.productView.create({
+        data: {
+          userId: user.id,
+          productId: productId,
+        },
+      });
+      await prisma.product.update({
+        where: { id: productId },
+        data: { viewCount: { increment: 1 } },
+      });
+    }
+
+    if (ip && userAgent) {
+      const recentView = await prisma.productView.findFirst({
+        where: {
+          productId,
+          ip,
+          userAgent,
+          createdAt: {
+            gte: new Date(Date.now() - 1000 * 60 * 60),
+          },
+        },
+      });
+
+      if (!recentView) {
+        await prisma.productView.create({
+          data: {
+            productId,
+            userAgent,
+            ip,
+          },
+        });
+
+        await prisma.product.update({
+          where: {
+            id: productId,
+          },
+          data: {
+            viewCount: {
+              increment: 1,
+            },
+          },
+        });
+      }
+    }
+    return;
+  }
+
+  await prisma.product.update({
+    where: {
+      id: productId,
+    },
+    data: {
+      viewCount: {
+        increment: 1,
+      },
+    },
+  });
+};
+
+
 
 const updateProduct = async (productId: string, payload: any) => {
   const updatedProduct = await prisma.product.update({
@@ -212,4 +306,5 @@ export const ProductServices = {
   getAllProduct,
   getSingleProduct,
   getProductByShopId,
+  increaseViewCount,
 };

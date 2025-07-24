@@ -14,8 +14,8 @@ const createProductIntoDb = catchAsync(async (req, res, next) => {
 });
 
 const getAllProduct = catchAsync(async (req, res, next) => {
-   const query=req.query
-  const result = await ProductServices.getAllProduct(query,query);
+  const query = req.query;
+  const result = await ProductServices.getAllProduct(query, query);
 
   sendResponse(res, {
     statusCode: 200,
@@ -34,9 +34,31 @@ const getSingleProduct = catchAsync(async (req, res, next) => {
     data: result,
   });
 });
+const incrementProductViewCOunt = catchAsync(async (req, res, next) => {
+  const ip = req.ip;
+  const userAgent = req.get("User-Agent") || "";
+  console.log(userAgent, "agent");
+
+  const result = await ProductServices.increaseViewCount(
+    req.params.id,
+    req.query,
+    ip,
+    userAgent
+  );
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "view added",
+    data: result,
+  });
+});
 
 const getProductByShopId = catchAsync(async (req, res, next) => {
-  const result = await ProductServices.getProductByShopId(req.params.shopId,req.query);
+  const result = await ProductServices.getProductByShopId(
+    req.params.shopId,
+    req.query
+  );
 
   sendResponse(res, {
     statusCode: 200,
@@ -74,4 +96,5 @@ export const ProductController = {
   getSingleProduct,
   getAllProduct,
   getProductByShopId,
+  incrementProductViewCOunt,
 };

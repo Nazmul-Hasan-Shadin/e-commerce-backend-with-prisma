@@ -16,6 +16,8 @@ router.post(
   }
 );
 
+router.post("/:id/view", ProductController.incrementProductViewCOunt);
+
 router.patch("/:id", ProductController.updateProduct);
 router.delete("/:id", ProductController.deleteProduct);
 

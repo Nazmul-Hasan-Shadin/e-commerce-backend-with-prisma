@@ -4,6 +4,15 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
+// generator client {
+//   provider = "prisma-client-js"
+// }
+
+// datasource db {
+//   provider = "postgresql"
+//   url      = env("DATABASE_URL")
+// }
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,95 +20,91 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  // directUrl = env("DIRECT_URL")
 }
 
-   
-// generator client {
-//   provider = "prisma-client-js"
-// }
-
-// datasource db {
-//   provider  = "postgresql"
-//   url       = env("DATABASE_URL")
-//   directUrl = env("DIRECT_URL")
-// }
-        
-
 model User {
-  id        String      @id @unique  @default(uuid())
-  username  String   @unique
-  email     String   @unique
-  password  String
-  role      Role @default(user)
-  extra String ?
-  status UserStatus @default(active)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  Order Order[]
-
+  id          String        @id @unique @default(uuid())
+  username    String        @unique
+  email       String        @unique
+  password    String
+  role        Role          @default(user)
+  extra       String?
+  status      UserStatus    @default(active)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  Order       Order[]
+  productView ProductView[]
 
   review Review[]
 
-  shop Shop?
+  shop         Shop?
   shopFollower ShopFollower[]
-
 }
-
 
 model Shop {
-  id          String      @id  @default(uuid())
-  vendorId    String      @unique
-  name        String
-  logo    String?
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  vendor      User @relation(fields: [vendorId], references: [id])
-  product Product[]
-  Order Order[]
+  id           String         @id @default(uuid())
+  vendorId     String         @unique
+  name         String
+  logo         String?
+  description  String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  vendor       User           @relation(fields: [vendorId], references: [id])
+  product      Product[]
+  Order        Order[]
   shopFollower ShopFollower[]
-
 }
 
-
 model Product {
-  id              String      @id @default(uuid())
-  shopId          String
-  name            String
-  description     String?
-  price           Float
-  isFlash Boolean? @default(false)
-  categoryId        String
-  inventoryCount  Int      @default(0)
-  discount        Float    @default(0.0) 
-  images          String[]
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  shop             Shop  @relation(fields: [shopId], references: [id])
-
-
-  category    Category   @relation(fields: [categoryId], references: [id])
+  id             String        @id @default(uuid())
+  shopId         String
+  name           String
+  description    String?
+  price          Float
+  isFlash        Boolean?      @default(false)
+  salesCount     Int           @default(0)
+  viewCount      Int           @default(0)
+  categoryId     String
+  inventoryCount Int           @default(0)
+  discount       Float         @default(0.0)
+  images         String[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  shop           Shop          @relation(fields: [shopId], references: [id])
+  productView    ProductView[]
+  category       Category      @relation(fields: [categoryId], references: [id])
   review         Review[]
-  OrderItems      OrderItem[]
+  OrderItems     OrderItem[]
   // CartItems       CartItem[]
 }
 
+model ProductView {
+  id        String   @id @default(uuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  viewCount Int      @default(0)
+  userId    String?
+  ip        String?
+  userAgent String?
+  user      User?    @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-model Category {
-  id          String     @id @default(uuid())
-  name        String     @unique
-  description String
-  images String?
-
-  products    Product[]
-
-  
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-
-  
+  @@unique([productId, userId])
 }
 
+model Category {
+  id          String  @id @default(uuid())
+  name        String  @unique
+  description String
+  images      String?
+
+  products Product[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
 
 model Order {
   id          String        @id @default(uuid())
@@ -107,7 +112,7 @@ model Order {
   shop        Shop          @relation(fields: [shopId], references: [id])
   customerId  String
   customer    User          @relation(fields: [customerId], references: [id])
-  status      PaymentStatus   @default(pending)
+  status      PaymentStatus @default(pending)
   totalAmount Float
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
@@ -115,18 +120,16 @@ model Order {
 }
 
 model OrderItem {
-  id        String   @id @default(uuid())
+  id        String  @id @default(uuid())
   orderId   String
-  order     Order    @relation(fields: [orderId], references: [id])
+  order     Order   @relation(fields: [orderId], references: [id])
   productId String
-  product   Product  @relation(fields: [productId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
   quantity  Int
   price     Float
 }
 
-  
-
-  model Review {
+model Review {
   id        String   @id @default(uuid())
   rating    Int
   comment   String?
@@ -141,18 +144,14 @@ model OrderItem {
 }
 
 model ShopFollower {
- 
-  userId   String 
-  shopId   String
+  userId String
+  shopId String
 
-  user     User   @relation(fields: [userId], references: [id])
-  shop     Shop   @relation(fields: [shopId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+  shop Shop @relation(fields: [shopId], references: [id])
 
-  @@unique([userId,shopId])
+  @@unique([userId, shopId])
 }
-
-
-
 
 enum Role {
   admin
@@ -165,6 +164,7 @@ enum UserStatus {
   block
   active
 }
+
 enum PaymentStatus {
   pending
   completed
