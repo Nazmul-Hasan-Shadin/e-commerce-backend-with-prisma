@@ -37,11 +37,14 @@ const getSingleProduct = catchAsync(async (req, res, next) => {
 const incrementProductViewCOunt = catchAsync(async (req, res, next) => {
   const ip = req.ip;
   const userAgent = req.get("User-Agent") || "";
-  console.log(userAgent, "agent");
+  
+
+  
+
 
   const result = await ProductServices.increaseViewCount(
     req.params.id,
-    req.query,
+    req.body,
     ip,
     userAgent
   );

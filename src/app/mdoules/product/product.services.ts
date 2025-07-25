@@ -3,6 +3,8 @@ import prisma from "../../../utils/prisma";
 import bcrypt from "bcrypt";
 import { Request } from "express";
 import { fileUpload } from "../../../utils/fileUploader";
+import { jwtHelpers } from "../../../utils/jwtUtils";
+import config from "../../../config";
 
 interface IFilterQuery {
   limit: number;
@@ -192,18 +194,21 @@ const increaseViewCount = async (
   ip: string,
   userAgent: string
 ) => {
-  console.log({ productId, userInfo, ip, userAgent });
   const productExists = await prisma.product.findUnique({
     where: { id: productId },
   });
 
+ console.log(Object.keys(userInfo),'bal');
+ 
   if (!productExists) {
     throw new Error("Product not found");
   }
-  if (Object.keys(userInfo).length > 0 && userInfo.email) {
+  if (Object.keys(userInfo).length >=0) {
+      
+    const decodedUserInfo= jwtHelpers.verifyToken(userInfo.userInfo,config.jwt.jwt_secret as string)
     const user = await prisma.user.findUniqueOrThrow({
       where: {
-        email: userInfo.email,
+        email: decodedUserInfo.email,
       },
     });
     const alreadyView = await prisma.productView.findUnique({
@@ -225,6 +230,9 @@ const increaseViewCount = async (
         where: { id: productId },
         data: { viewCount: { increment: 1 } },
       });
+
+      console.log('user dea update holo ');
+      
     }
 
     if (ip && userAgent) {

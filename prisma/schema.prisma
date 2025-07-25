@@ -40,6 +40,20 @@ model User {
 
   shop         Shop?
   shopFollower ShopFollower[]
+  userData     UserData?
+}
+
+model UserData {
+  id            String  @id @unique @default(uuid())
+  userId        String  @unique
+  firstName     String?
+  lastName      String?
+  contactNumber Int?
+  address       String?
+  gender        String?
+  age           Int?
+
+  user User  @relation(fields: [userId], references: [id])
 }
 
 model Shop {

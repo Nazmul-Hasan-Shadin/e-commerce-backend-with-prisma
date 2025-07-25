@@ -1,10 +1,11 @@
 import express, { NextFunction, Request, Response } from "express";
 import { ProductController } from "./product.controller";
 import { fileUpload } from "../../../utils/fileUploader";
+import auth from "../Auth/auth";
 
 const router = express();
 router.get("/", ProductController.getAllProduct);
-router.get("/:id", ProductController.getSingleProduct);
+router.get("/:id", auth(),ProductController.getSingleProduct);
 router.get("/shop/products/:shopId", ProductController.getProductByShopId);
 
 router.post(
