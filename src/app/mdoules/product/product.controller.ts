@@ -37,10 +37,6 @@ const getSingleProduct = catchAsync(async (req, res, next) => {
 const incrementProductViewCOunt = catchAsync(async (req, res, next) => {
   const ip = req.ip;
   const userAgent = req.get("User-Agent") || "";
-  
-
-  
-
 
   const result = await ProductServices.increaseViewCount(
     req.params.id,
@@ -92,6 +88,18 @@ const deleteProduct = catchAsync(async (req, res, next) => {
   });
 });
 
+const  getFollowedShopProduct=catchAsync(async(req,res,next)=>{
+  const user =req.user
+  const result = await ProductServices.getFollowedShopProduct(user,req.query);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'jj',
+    data: result,
+  });
+})
+
 export const ProductController = {
   createProductIntoDb,
   updateProduct,
@@ -100,4 +108,5 @@ export const ProductController = {
   getAllProduct,
   getProductByShopId,
   incrementProductViewCOunt,
+  getFollowedShopProduct
 };

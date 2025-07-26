@@ -8,6 +8,7 @@ import { OrderRoutes } from "../mdoules/order/order.route";
 import { ReviewRoutes } from "../mdoules/review/review.route";
 import { FollowerRoutes } from "../mdoules/ShopFollow/shopFollow.route";
 import { PaymentRoutes } from "../mdoules/payment/payment.route";
+import { BannerRoutes } from "../mdoules/banner/banner.route";
 
 const router = express.Router();
 
@@ -48,6 +49,10 @@ const moduleRoutes = [
     path: "",
     route: PaymentRoutes,
   },
+  {
+    path:'/banner',
+    route:BannerRoutes
+  }
 ];
 
 moduleRoutes.forEach((route) => router.use(route.path, route.route));

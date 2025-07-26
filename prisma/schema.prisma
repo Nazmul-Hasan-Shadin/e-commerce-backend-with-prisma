@@ -53,7 +53,7 @@ model UserData {
   gender        String?
   age           Int?
 
-  user User  @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id])
 }
 
 model Shop {
@@ -165,6 +165,18 @@ model ShopFollower {
   shop Shop @relation(fields: [shopId], references: [id])
 
   @@unique([userId, shopId])
+}
+
+model Banner {
+  id       String  @id @default(uuid())
+  title    String
+  subtitle String?
+  image    String
+  link     String?
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum Role {

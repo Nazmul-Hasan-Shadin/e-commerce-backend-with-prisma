@@ -2,6 +2,7 @@ import express, { NextFunction, Request, Response } from "express";
 import { ProductController } from "./product.controller";
 import { fileUpload } from "../../../utils/fileUploader";
 import auth from "../Auth/auth";
+import { Role } from "@prisma/client";
 
 const router = express();
 router.get("/", ProductController.getAllProduct);
@@ -19,7 +20,11 @@ router.post(
 
 router.post("/:id/view", ProductController.incrementProductViewCOunt);
 
+router.get("/user/following/products",auth(Role.user), ProductController.getFollowedShopProduct);
+
 router.patch("/:id", ProductController.updateProduct);
 router.delete("/:id", ProductController.deleteProduct);
+
+
 
 export const ProductRoutes = router;

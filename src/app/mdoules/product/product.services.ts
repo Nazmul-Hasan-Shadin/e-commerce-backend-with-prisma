@@ -5,6 +5,7 @@ import { Request } from "express";
 import { fileUpload } from "../../../utils/fileUploader";
 import { jwtHelpers } from "../../../utils/jwtUtils";
 import config from "../../../config";
+import { IAuthUser } from "../../../interface/common";
 
 interface IFilterQuery {
   limit: number;
@@ -21,7 +22,6 @@ const getAllProduct = async (filters: any, options: any) => {
   if (brandFilter) {
     brandFilterByArray = brandFilter.split(",");
   }
-  console.log(brandFilterByArray);
 
   let category;
   if (categoryName) {
@@ -198,14 +198,16 @@ const increaseViewCount = async (
     where: { id: productId },
   });
 
- console.log(Object.keys(userInfo),'bal');
- 
+  console.log(Object.keys(userInfo), "bal");
+
   if (!productExists) {
     throw new Error("Product not found");
   }
-  if (Object.keys(userInfo).length >=0) {
-      
-    const decodedUserInfo= jwtHelpers.verifyToken(userInfo.userInfo,config.jwt.jwt_secret as string)
+  if (Object.keys(userInfo).length >= 0) {
+    const decodedUserInfo = jwtHelpers.verifyToken(
+      userInfo.userInfo,
+      config.jwt.jwt_secret as string
+    );
     const user = await prisma.user.findUniqueOrThrow({
       where: {
         email: decodedUserInfo.email,
@@ -231,8 +233,7 @@ const increaseViewCount = async (
         data: { viewCount: { increment: 1 } },
       });
 
-      console.log('user dea update holo ');
-      
+      console.log("user dea update holo ");
     }
 
     if (ip && userAgent) {
@@ -271,8 +272,8 @@ const increaseViewCount = async (
     return;
   }
 
-  console.log('view is called');
-  
+  console.log("view is called");
+
   await prisma.product.update({
     where: {
       id: productId,
@@ -285,14 +286,11 @@ const increaseViewCount = async (
   });
 };
 
-const getPopularProduct=async()=>{
-      const product= await prisma.product.findMany({
-        where:{
-          
-        }
-      })
-}
-
+const getPopularProduct = async () => {
+  const product = await prisma.product.findMany({
+    where: {},
+  });
+};
 
 const updateProduct = async (productId: string, payload: any) => {
   const updatedProduct = await prisma.product.update({
@@ -316,6 +314,62 @@ const deleteProduct = async (productId: string) => {
   return { message: "Product deleted successfully" };
 };
 
+const getFollowedShopProduct = async (
+  userData: IAuthUser,
+  filterQuery: Record<string, unknown>
+) => {
+  console.log({ filterQuery });
+
+  const { searchTerm, ...filtersData } = filterQuery;
+  const userFollowedShop = await prisma.user.findFirstOrThrow({
+    where: {
+      email: userData.email,
+    },
+    select: {
+      shopFollower: true,
+    },
+  });
+
+  let limit = Number(filterQuery.limit) || 10;
+  let page = Number(filterQuery.page) || 1;
+  let skip = (page - 1) / limit;
+
+  //=========search product
+
+  let andCondition = [];
+
+  if (searchTerm) {
+    andCondition.push({
+      OR: ["name", "description"].map((query) => ({
+        [query]: {
+          contains: searchTerm,
+          mode: "insensitive",
+        },
+      })),
+    });
+  }
+
+  andCondition.push({
+    shopId: {
+      in: userFollowedShop.shopFollower.map((shopId) => shopId.shopId),
+    },
+  });
+
+  const whereCondition = andCondition.length > 0 ? { AND: andCondition } : {};
+
+  const result = await prisma.product.findMany({
+    where: whereCondition,
+    skip,
+    take: limit,
+    orderBy:
+      filterQuery.orderBy && filterQuery.sortBy
+        ? { [filterQuery.sortBy as string]: filterQuery.orderBy }
+        : { createdAt: "asc" },
+  });
+
+  return result;
+};
+
 export const ProductServices = {
   createProduct,
   updateProduct,
@@ -324,4 +378,5 @@ export const ProductServices = {
   getSingleProduct,
   getProductByShopId,
   increaseViewCount,
+  getFollowedShopProduct,
 };
