@@ -1,7 +1,7 @@
 import multer from "multer";
 import path from "path";
-import { v2 as cloudinary } from 'cloudinary';
-import fs from 'fs'
+import { v2 as cloudinary } from "cloudinary";
+import fs from "fs";
 import { ICloudinaryRes } from "../interface/Ifile";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 
@@ -14,46 +14,39 @@ import { CloudinaryStorage } from "multer-storage-cloudinary";
 //   },
 // });
 
-
-
-
 cloudinary.config({
-    cloud_name: "dxhf5qlpi",
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_SEC, 
-  });
+  cloud_name: "dxhf5qlpi",
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_SEC,
+});
 
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+});
 
-  const storage= new CloudinaryStorage({
-    cloudinary:cloudinary
-   })
+const multerUpload = multer({ storage });
 
-    const multerUpload=multer({storage})
-  
-  
-  // const uploadToCloudinary = async (
-  //   file: any
-  // ):Promise<ICloudinaryRes | undefined>=> {
-  //   return new Promise((resolve, reject) => {
-  //     cloudinary.uploader.upload(
-  //       file.path,
-  
-  //       (error: Error, result:any) => {
-  //         fs.unlinkSync(file.path);
-  //         if (error) {
-  //           reject(error);
-  //         } else {
-  //           resolve(result);
-  //         }
-  //       }
-  //     );
-  //   });
-  // };
+// const uploadToCloudinary = async (
+//   file: any
+// ):Promise<ICloudinaryRes | undefined>=> {
+//   return new Promise((resolve, reject) => {
+//     cloudinary.uploader.upload(
+//       file.path,
+
+//       (error: Error, result:any) => {
+//         fs.unlinkSync(file.path);
+//         if (error) {
+//           reject(error);
+//         } else {
+//           resolve(result);
+//         }
+//       }
+//     );
+//   });
+// };
 
 // const upload = multer({ storage: storage });
 
 export const fileUpload = {
-  
-
-  multerUpload
+  multerUpload,
 };

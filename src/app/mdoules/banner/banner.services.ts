@@ -1,13 +1,31 @@
-import prisma from "../../../utils/prisma"
+import { Banner } from "@prisma/client";
+import prisma from "../../../utils/prisma";
 
-const createBannerIntoDb=async(bannerInfo)=>{
-      
-    const result = await prisma.banner.create({
-        data:bannerInfo
-    })
-    return result
-}
+const createBannerIntoDb = async (bannerInfo: Banner) => {
+  const result = await prisma.banner.create({
+    data: bannerInfo,
+  });
 
-export const BannerServices={
-    createBannerIntoDb
-}
+  return result;
+};
+
+const getBannerFromDb = async () => {
+  const result = await prisma.banner.findMany({});
+  return result;
+};
+
+const updateBannerIntoDb = async (payload: Banner) => {
+  const result = await prisma.banner.update({
+    where: {
+      id: payload.id,
+    },
+    data: payload,
+  });
+  return result;
+};
+
+export const BannerServices = {
+  createBannerIntoDb,
+  getBannerFromDb,
+  updateBannerIntoDb
+};
