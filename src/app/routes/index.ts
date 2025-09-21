@@ -9,6 +9,7 @@ import { ReviewRoutes } from "../mdoules/review/review.route";
 import { FollowerRoutes } from "../mdoules/ShopFollow/shopFollow.route";
 import { PaymentRoutes } from "../mdoules/payment/payment.route";
 import { BannerRoutes } from "../mdoules/banner/banner.route";
+import { PaymentRoutesSsl } from "../mdoules/SSLPAYMENT/payment.route";
 
 const router = express.Router();
 
@@ -52,7 +53,12 @@ const moduleRoutes = [
   {
     path:'/banner',
     route:BannerRoutes
+  },
+  {
+    path:'/payment-gate',
+    route:PaymentRoutesSsl
   }
+
 ];
 
 moduleRoutes.forEach((route) => router.use(route.path, route.route));
