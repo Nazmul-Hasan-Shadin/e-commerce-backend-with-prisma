@@ -13,6 +13,9 @@ const initPayment=catchAsync(async(req,res , next)=>{
     });
   })
 
+
+  
+
   export const PaymentControllerSSL={
     initPayment
   }
