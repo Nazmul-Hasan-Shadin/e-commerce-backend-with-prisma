@@ -16,7 +16,7 @@ const getAllProduct = async (filters: any, options: any) => {
   const { searchTerm, brandFilter, isFlash, categoryName, ...filterData } =
     filters;
   //categoryName dea dropdown dea direct search kora jai
-  console.log({ searchTerm, brandFilter, isFlash, categoryName, filterData });
+ 
 
   let brandFilterByArray = [];
   if (brandFilter) {
@@ -198,7 +198,7 @@ const increaseViewCount = async (
     where: { id: productId },
   });
 
-  console.log(Object.keys(userInfo), "bal");
+
 
   if (!productExists) {
     throw new Error("Product not found");
@@ -233,7 +233,7 @@ const increaseViewCount = async (
         data: { viewCount: { increment: 1 } },
       });
 
-      console.log("user dea update holo ");
+   
     }
 
     if (ip && userAgent) {
@@ -272,7 +272,7 @@ const increaseViewCount = async (
     return;
   }
 
-  console.log("view is called");
+
 
   await prisma.product.update({
     where: {
@@ -318,7 +318,7 @@ const getFollowedShopProduct = async (
   userData: IAuthUser,
   filterQuery: Record<string, unknown>
 ) => {
-  console.log({ filterQuery });
+
 
   const { searchTerm, ...filtersData } = filterQuery;
   const userFollowedShop = await prisma.user.findFirstOrThrow({

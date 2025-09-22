@@ -29,7 +29,26 @@ const getReviewWithProductDetails = async (id: string) => {
   return result;
 };
 
+const getMyReview = async (userInfo: any) => {
+  const user = await prisma.user.findUniqueOrThrow({
+    where: {
+      email: userInfo.email,
+    },
+  });
+
+  const result = await prisma.review.findMany({
+    where: {
+      userId: user.id,
+    },
+    include: {
+      product: true,
+    },
+  });
+  return result;
+};
+
 export const ReviewServices = {
   addReview,
   getReviewWithProductDetails,
+  getMyReview,
 };

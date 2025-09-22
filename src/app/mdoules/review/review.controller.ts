@@ -1,4 +1,4 @@
-import { Request } from "express";
+import { Request, Response } from "express";
 import catchAsync from "../../../utils/catchAsync";
 import sendResponse from "../../../utils/sendResponse";
 
@@ -31,7 +31,23 @@ const getProductWithReview = catchAsync(async (req, res, next) => {
   });
 });
 
+
+const myReview = catchAsync(async (req:Request & {user:any}, res:Response, next) => {
+  console.log(req.user,'iam userfjkdfkd');
+  
+
+  const product = await ReviewServices.getMyReview(req.user);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "review fetched",
+    data: product,
+  });
+});
+
 export const ReviewController = {
   addReview,
   getProductWithReview,
+  myReview
 };

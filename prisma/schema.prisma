@@ -154,7 +154,7 @@ model Review {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([productId, userId])
+  @@unique([productId, userId])
 }
 
 model ShopFollower {

@@ -33,7 +33,7 @@ const getAllProduct = (filters, options) => __awaiter(void 0, void 0, void 0, fu
     if (brandFilter) {
         brandFilterByArray = brandFilter.split(",");
     }
-    console.log(brandFilterByArray);
+  
     let category;
     if (categoryName) {
         category = yield prisma_1.default.category.findUnique({
@@ -42,7 +42,7 @@ const getAllProduct = (filters, options) => __awaiter(void 0, void 0, void 0, fu
             },
         });
     }
-    console.log(category, "paisi");
+
     const andCondition = [];
     if (searchTerm) {
         andCondition.push({

@@ -18,7 +18,7 @@ const createOrder = catchAsync(async (req, res, next) => {
 const getAllOrders = catchAsync(
   async (req: Request & { user?: IAuthUser }, res, next) => {
     const user = req.user;
-    console.log(user,'iam user');
+
     
     const result = await OrderServices.getAllOrdersFromDB(user!);
 

@@ -1,12 +1,13 @@
 import axios from "axios";
 import config from "../../../config";
+import AppError from "../../error/AppError";
 
 const initPayment = async (orderId: string) => {
   const data = {
     total_amount: 100,
     currency: "BDT",
     tran_id: "REF123", // use unique tran_id for each api call
-    success_url: "http://localhost:3030/success",
+    success_url: "http://localhost:3000/success-payment",
     fail_url: "http://localhost:3030/fail",
     cancel_url: "http://localhost:3030/cancel",
     ipn_url: "http://localhost:3030/ipn",
@@ -31,9 +32,9 @@ const initPayment = async (orderId: string) => {
     ship_state: "Dhaka",
     ship_postcode: 1000,
     ship_country: "Bangladesh",
-    store_id:config.payment.store_id,
+    store_id: config.payment.store_id,
 
-    store_passwd:config.payment.store_pass,
+    store_passwd: config.payment.store_pass,
   };
 
   const response = await axios.post(
@@ -43,13 +44,48 @@ const initPayment = async (orderId: string) => {
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
     }
   );
- console.log( response.data.GatewayPageURL);
- 
+
+
   return {
     paymentUrl: response.data.GatewayPageURL,
   };
 };
 
+const validatePayment = async (payload: any) => {
+    console.log('iam called',payload);
+    
+  try {
+    const response = await axios({
+      method: "GET",
+      url: `https://sandbox.sslcommerz.com/validator/api/validationserverAPI.php?wsdl?val_id=${payload.val_id}&store_id=${config.payment.store_id}&store_passwd=${config.payment.store_pass}&format=json`,
+    });
+
+    return response.data;
+
+
+  } catch (error) {
+    throw new AppError(500, "payment validation failed");
+  }
+};
+
+const validatePayment2 = async (payload: { val_id: string; tran_id?: string; status?: string }) => {
+  try {
+    const { val_id } = payload;
+
+    // SSLCommerz Validation API (sandbox/prod অনুযায়ী base URL সেট করিস)
+    const response = await axios.get(
+      `https://sandbox.sslcommerz.com/validator/api/validationserverAPI.php?val_id=${val_id}&store_id=${config.payment.store_id}&store_passwd=${config.payment.store_pass}&v=1&format=json`
+    );
+
+    // এখানে চাইলে DB update করতে পারিস (order status = "paid") ইত্যাদি
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error?.message || "Payment validation failed");
+  }
+};
 export const PaymentServicesSSL = {
   initPayment,
+  validatePayment
+  ,
+  validatePayment2
 };

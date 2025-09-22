@@ -107,7 +107,7 @@ const resetPassword = async (
   payload: { email: string; newPassword: string },
   token: any
 ) => {
-  console.log(payload.email);
+
 
   const user = await prisma.user.findUnique({
     where: {
