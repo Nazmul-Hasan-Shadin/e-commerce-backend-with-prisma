@@ -33,10 +33,10 @@ const getProductWithReview = catchAsync(async (req, res, next) => {
 
 
 const myReview = catchAsync(async (req:Request & {user:any}, res:Response, next) => {
-  console.log(req.user,'iam userfjkdfkd');
+ 
   
 
-  const product = await ReviewServices.getMyReview(req.user);
+  const product = await ReviewServices.getMyReview(req.user, req.query);
 
   sendResponse(res, {
     statusCode: 200,

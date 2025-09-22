@@ -29,7 +29,12 @@ const getReviewWithProductDetails = async (id: string) => {
   return result;
 };
 
-const getMyReview = async (userInfo: any) => {
+const getMyReview = async (userInfo: any,options) => {
+
+  let page = Number(options.page) || 1;
+  let limit =Number(options.limit) || 4;
+  let skip = (page - 1) * limit;
+
   const user = await prisma.user.findUniqueOrThrow({
     where: {
       email: userInfo.email,
@@ -43,8 +48,25 @@ const getMyReview = async (userInfo: any) => {
     include: {
       product: true,
     },
+    skip: skip,
+    take: limit,
   });
-  return result;
+ const total= await prisma.review.count({
+  where:{
+      userId: user.id,
+  }
+ })
+
+  return {
+    meta:{
+      total,
+      limit,
+      page,
+       totalPages: Math.ceil(total / limit),
+
+    },
+    data:result
+  };
 };
 
 export const ReviewServices = {

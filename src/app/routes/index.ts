@@ -10,6 +10,7 @@ import { FollowerRoutes } from "../mdoules/ShopFollow/shopFollow.route";
 import { PaymentRoutes } from "../mdoules/payment/payment.route";
 import { BannerRoutes } from "../mdoules/banner/banner.route";
 import { PaymentRoutesSsl } from "../mdoules/SSLPAYMENT/payment.route";
+import { MetaRoutes } from "../mdoules/meta/meta.route";
 
 const router = express.Router();
 
@@ -57,6 +58,10 @@ const moduleRoutes = [
   {
     path:'/payment-gate',
     route:PaymentRoutesSsl
+  },
+    {
+    path:'',
+    route:MetaRoutes
   }
 
 ];
