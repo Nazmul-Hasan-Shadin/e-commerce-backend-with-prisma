@@ -8,7 +8,8 @@ import { MetaServices } from "./meta.services";
 
 const getRoleMeta = catchAsync(async (req, res) => {
   const result = await MetaServices.fetchDashboardMetaData(req.user);
-
+  console.log(result,'iam result');
+  
    sendResponse(res, {
     statusCode: 200,
     success: true,

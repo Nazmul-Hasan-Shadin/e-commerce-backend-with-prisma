@@ -6,10 +6,10 @@ import AppError from "../../error/AppError";
 const fetchDashboardMetaData = async (user: IAuthUser) => {
   switch (user.role) {
     case Role.admin:
-      getAdminMetaData(user);
+    return  getAdminMetaData(user);
       break;
     case Role.vendor:
-      getVendorMetaData(user);
+   return   getVendorMetaData(user);
       break;
     default:
       throw new AppError(404, "invalid role");
@@ -28,6 +28,9 @@ const getAdminMetaData = async (user: IAuthUser) => {
       totalAmount: true,
     },
   });
+  return {
+    vendorCount,userCount,totalRevenu
+  }
 };
 
 const getVendorMetaData = async (user: IAuthUser) => {
@@ -54,7 +57,21 @@ const getVendorMetaData = async (user: IAuthUser) => {
     },
   });
 
-  const productCount = await prisma.product.aggregate({
+    const totalReview = await prisma.review.count({
+
+    where: {
+       product:{
+        shop:{
+            vendor:{
+                email:user.email
+            }
+        }
+       }
+    },
+  });
+
+  const productCount = await prisma.product.count({
+
     where: {
       shop: {
         vendor: {
@@ -63,6 +80,11 @@ const getVendorMetaData = async (user: IAuthUser) => {
       },
     },
   });
+
+//   console.log( {orderCount,totalRevenu,totalReview,productCount});
+  
+
+  return {orderCount,totalRevenu,totalReview,productCount}
 };
 
 // const getUserMetaData = async (user: IAuthUser) => {
