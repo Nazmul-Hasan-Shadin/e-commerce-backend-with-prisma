@@ -6,10 +6,10 @@ import AppError from "../../error/AppError";
 const fetchDashboardMetaData = async (user: IAuthUser) => {
   switch (user.role) {
     case Role.admin:
-    return  getAdminMetaData(user);
+      return getAdminMetaData(user);
       break;
     case Role.vendor:
-   return   getVendorMetaData(user);
+      return getVendorMetaData(user);
       break;
     default:
       throw new AppError(404, "invalid role");
@@ -29,8 +29,10 @@ const getAdminMetaData = async (user: IAuthUser) => {
     },
   });
   return {
-    vendorCount,userCount,totalRevenu
-  }
+    vendorCount,
+    userCount,
+    totalRevenu,
+  };
 };
 
 const getVendorMetaData = async (user: IAuthUser) => {
@@ -57,21 +59,19 @@ const getVendorMetaData = async (user: IAuthUser) => {
     },
   });
 
-    const totalReview = await prisma.review.count({
-
+  const totalReview = await prisma.review.count({
     where: {
-       product:{
-        shop:{
-            vendor:{
-                email:user.email
-            }
-        }
-       }
+      product: {
+        shop: {
+          vendor: {
+            email: user.email,
+          },
+        },
+      },
     },
   });
 
   const productCount = await prisma.product.count({
-
     where: {
       shop: {
         vendor: {
@@ -81,10 +81,9 @@ const getVendorMetaData = async (user: IAuthUser) => {
     },
   });
 
-//   console.log( {orderCount,totalRevenu,totalReview,productCount});
-  
+  //   console.log( {orderCount,totalRevenu,totalReview,productCount});
 
-  return {orderCount,totalRevenu,totalReview,productCount}
+  return { orderCount, totalRevenu, totalReview, productCount };
 };
 
 // const getUserMetaData = async (user: IAuthUser) => {
@@ -101,6 +100,6 @@ const getVendorMetaData = async (user: IAuthUser) => {
 //   });
 // };
 
-export const MetaServices={
-  fetchDashboardMetaData
-}
+export const MetaServices = {
+  fetchDashboardMetaData,
+};
