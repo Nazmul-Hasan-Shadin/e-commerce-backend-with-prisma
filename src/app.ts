@@ -7,12 +7,10 @@ const app: Application = express();
 
 app.use(
   cors({
-    origin: ["https://independent-mart.vercel.app"],
+    origin: ['https://independent-mart.vercel.app'],
     credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-app.options("*", cors()); 
 app.use(express.json());
 
 app.use(
