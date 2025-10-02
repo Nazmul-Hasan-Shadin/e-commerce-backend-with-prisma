@@ -14,6 +14,9 @@ const loginUser = async (payload: { email: string; password: string }) => {
       status: UserStatus.active,
     },
   });
+  if (!userData) {
+    throw new AppError(404, "User not found");
+  }
 
   const isCorrectPassword: boolean = await bcrypt.compare(
     payload.password,
@@ -107,8 +110,6 @@ const resetPassword = async (
   payload: { email: string; newPassword: string },
   token: any
 ) => {
-
-
   const user = await prisma.user.findUnique({
     where: {
       email: payload.email,
