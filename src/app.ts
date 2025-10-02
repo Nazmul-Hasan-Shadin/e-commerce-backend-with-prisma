@@ -8,7 +8,7 @@ const app: Application = express();
 app.use(
   cors({
     origin: [
-      "https://independent-mart.vercel.appg",
+      "https://independent-mart.vercel.app",
     ],
     credentials: true,
   })
