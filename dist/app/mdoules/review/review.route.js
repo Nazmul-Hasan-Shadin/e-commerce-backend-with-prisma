@@ -10,5 +10,6 @@ const client_1 = require("@prisma/client");
 const review_controller_1 = require("./review.controller");
 const router = express_1.default.Router();
 router.post("/", (0, auth_1.default)(client_1.Role.user, client_1.Role.admin, client_1.Role.vendor), review_controller_1.ReviewController.addReview);
+router.get("/my-review", (0, auth_1.default)('user'), review_controller_1.ReviewController.myReview);
 router.get("/:productId", review_controller_1.ReviewController.getProductWithReview);
 exports.ReviewRoutes = router;

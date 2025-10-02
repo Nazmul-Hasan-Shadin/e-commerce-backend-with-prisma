@@ -25,15 +25,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductServices = void 0;
 const prisma_1 = __importDefault(require("../../../utils/prisma"));
+const jwtUtils_1 = require("../../../utils/jwtUtils");
+const config_1 = __importDefault(require("../../../config"));
 const getAllProduct = (filters, options) => __awaiter(void 0, void 0, void 0, function* () {
     const { searchTerm, brandFilter, isFlash, categoryName } = filters, filterData = __rest(filters, ["searchTerm", "brandFilter", "isFlash", "categoryName"]);
     //categoryName dea dropdown dea direct search kora jai
-    console.log({ searchTerm, brandFilter, isFlash, categoryName, filterData });
     let brandFilterByArray = [];
     if (brandFilter) {
         brandFilterByArray = brandFilter.split(",");
     }
-  
     let category;
     if (categoryName) {
         category = yield prisma_1.default.category.findUnique({
@@ -42,7 +42,6 @@ const getAllProduct = (filters, options) => __awaiter(void 0, void 0, void 0, fu
             },
         });
     }
-
     const andCondition = [];
     if (searchTerm) {
         andCondition.push({
@@ -156,9 +155,9 @@ const getProductByShopId = (shopId, filterQuery) => __awaiter(void 0, void 0, vo
         meta: {
             limit,
             page,
-            total
+            total,
         },
-        data: result
+        data: result,
     };
 });
 const createProduct = (req) => __awaiter(void 0, void 0, void 0, function* () {
@@ -174,6 +173,89 @@ const createProduct = (req) => __awaiter(void 0, void 0, void 0, function* () {
         data: req.body,
     });
     return result;
+});
+const increaseViewCount = (productId, userInfo, ip, userAgent) => __awaiter(void 0, void 0, void 0, function* () {
+    const productExists = yield prisma_1.default.product.findUnique({
+        where: { id: productId },
+    });
+    if (!productExists) {
+        throw new Error("Product not found");
+    }
+    if (Object.keys(userInfo).length >= 0) {
+        const decodedUserInfo = jwtUtils_1.jwtHelpers.verifyToken(userInfo.userInfo, config_1.default.jwt.jwt_secret);
+        const user = yield prisma_1.default.user.findUniqueOrThrow({
+            where: {
+                email: decodedUserInfo.email,
+            },
+        });
+        const alreadyView = yield prisma_1.default.productView.findUnique({
+            where: {
+                productId_userId: {
+                    productId,
+                    userId: user.id,
+                },
+            },
+        });
+        if (!alreadyView) {
+            yield prisma_1.default.productView.create({
+                data: {
+                    userId: user.id,
+                    productId: productId,
+                },
+            });
+            yield prisma_1.default.product.update({
+                where: { id: productId },
+                data: { viewCount: { increment: 1 } },
+            });
+        }
+        if (ip && userAgent) {
+            const recentView = yield prisma_1.default.productView.findFirst({
+                where: {
+                    productId,
+                    ip,
+                    userAgent,
+                    createdAt: {
+                        gte: new Date(Date.now() - 1000 * 60 * 60),
+                    },
+                },
+            });
+            if (!recentView) {
+                yield prisma_1.default.productView.create({
+                    data: {
+                        productId,
+                        userAgent,
+                        ip,
+                    },
+                });
+                yield prisma_1.default.product.update({
+                    where: {
+                        id: productId,
+                    },
+                    data: {
+                        viewCount: {
+                            increment: 1,
+                        },
+                    },
+                });
+            }
+        }
+        return;
+    }
+    yield prisma_1.default.product.update({
+        where: {
+            id: productId,
+        },
+        data: {
+            viewCount: {
+                increment: 1,
+            },
+        },
+    });
+});
+const getPopularProduct = () => __awaiter(void 0, void 0, void 0, function* () {
+    const product = yield prisma_1.default.product.findMany({
+        where: {},
+    });
 });
 const updateProduct = (productId, payload) => __awaiter(void 0, void 0, void 0, function* () {
     const updatedProduct = yield prisma_1.default.product.update({
@@ -194,6 +276,47 @@ const deleteProduct = (productId) => __awaiter(void 0, void 0, void 0, function*
     });
     return { message: "Product deleted successfully" };
 });
+const getFollowedShopProduct = (userData, filterQuery) => __awaiter(void 0, void 0, void 0, function* () {
+    const { searchTerm } = filterQuery, filtersData = __rest(filterQuery, ["searchTerm"]);
+    const userFollowedShop = yield prisma_1.default.user.findFirstOrThrow({
+        where: {
+            email: userData.email,
+        },
+        select: {
+            shopFollower: true,
+        },
+    });
+    let limit = Number(filterQuery.limit) || 10;
+    let page = Number(filterQuery.page) || 1;
+    let skip = (page - 1) / limit;
+    //=========search product
+    let andCondition = [];
+    if (searchTerm) {
+        andCondition.push({
+            OR: ["name", "description"].map((query) => ({
+                [query]: {
+                    contains: searchTerm,
+                    mode: "insensitive",
+                },
+            })),
+        });
+    }
+    andCondition.push({
+        shopId: {
+            in: userFollowedShop.shopFollower.map((shopId) => shopId.shopId),
+        },
+    });
+    const whereCondition = andCondition.length > 0 ? { AND: andCondition } : {};
+    const result = yield prisma_1.default.product.findMany({
+        where: whereCondition,
+        skip,
+        take: limit,
+        orderBy: filterQuery.orderBy && filterQuery.sortBy
+            ? { [filterQuery.sortBy]: filterQuery.orderBy }
+            : { createdAt: "asc" },
+    });
+    return result;
+});
 exports.ProductServices = {
     createProduct,
     updateProduct,
@@ -201,4 +324,6 @@ exports.ProductServices = {
     getAllProduct,
     getSingleProduct,
     getProductByShopId,
+    increaseViewCount,
+    getFollowedShopProduct,
 };

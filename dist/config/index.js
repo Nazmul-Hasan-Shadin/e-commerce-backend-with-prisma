@@ -19,4 +19,8 @@ exports.default = {
         app_password: process.env.APP_PASSWORD,
         email: process.env.EMAIL,
     },
+    payment: {
+        store_pass: process.env.STORE_PASS,
+        store_id: process.env.STORE_ID
+    }
 };

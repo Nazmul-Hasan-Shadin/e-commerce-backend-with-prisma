@@ -81,7 +81,6 @@ const forgetPassword = (id) => __awaiter(void 0, void 0, void 0, function* () {
     (0, sendMail_1.sendEmail)(user === null || user === void 0 ? void 0 : user.email, resetUILink);
 });
 const resetPassword = (payload, token) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(payload.email);
     const user = yield prisma_1.default.user.findUnique({
         where: {
             email: payload.email,

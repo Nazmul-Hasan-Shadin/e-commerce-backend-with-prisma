@@ -21,7 +21,7 @@ cloudinary_1.v2.config({
     api_secret: process.env.CLOUDINARY_SEC,
 });
 const storage = new multer_storage_cloudinary_1.CloudinaryStorage({
-    cloudinary: cloudinary_1.v2
+    cloudinary: cloudinary_1.v2,
 });
 const multerUpload = (0, multer_1.default)({ storage });
 // const uploadToCloudinary = async (
@@ -43,5 +43,5 @@ const multerUpload = (0, multer_1.default)({ storage });
 // };
 // const upload = multer({ storage: storage });
 exports.fileUpload = {
-    multerUpload
+    multerUpload,
 };

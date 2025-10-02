@@ -13,6 +13,9 @@ const order_route_1 = require("../mdoules/order/order.route");
 const review_route_1 = require("../mdoules/review/review.route");
 const shopFollow_route_1 = require("../mdoules/ShopFollow/shopFollow.route");
 const payment_route_1 = require("../mdoules/payment/payment.route");
+const banner_route_1 = require("../mdoules/banner/banner.route");
+const payment_route_2 = require("../mdoules/SSLPAYMENT/payment.route");
+const meta_route_1 = require("../mdoules/meta/meta.route");
 const router = express_1.default.Router();
 const moduleRoutes = [
     {
@@ -51,6 +54,18 @@ const moduleRoutes = [
         path: "",
         route: payment_route_1.PaymentRoutes,
     },
+    {
+        path: '/banner',
+        route: banner_route_1.BannerRoutes
+    },
+    {
+        path: '/payment-gate',
+        route: payment_route_2.PaymentRoutesSsl
+    },
+    {
+        path: '',
+        route: meta_route_1.MetaRoutes
+    }
 ];
 moduleRoutes.forEach((route) => router.use(route.path, route.route));
 exports.default = router;

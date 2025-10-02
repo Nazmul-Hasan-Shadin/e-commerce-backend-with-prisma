@@ -29,7 +29,7 @@ const getReviewWithProductDetails = async (id: string) => {
   return result;
 };
 
-const getMyReview = async (userInfo: any,options) => {
+const getMyReview = async (userInfo: any,options:any) => {
 
   let page = Number(options.page) || 1;
   let limit =Number(options.limit) || 4;

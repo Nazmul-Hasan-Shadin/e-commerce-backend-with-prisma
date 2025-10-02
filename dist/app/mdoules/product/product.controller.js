@@ -44,6 +44,17 @@ const getSingleProduct = (0, catchAsync_1.default)((req, res, next) => __awaiter
         data: result,
     });
 }));
+const incrementProductViewCOunt = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const ip = req.ip;
+    const userAgent = req.get("User-Agent") || "";
+    const result = yield product_services_1.ProductServices.increaseViewCount(req.params.id, req.body, ip, userAgent);
+    (0, sendResponse_1.default)(res, {
+        statusCode: 200,
+        success: true,
+        message: "view added",
+        data: result,
+    });
+}));
 const getProductByShopId = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield product_services_1.ProductServices.getProductByShopId(req.params.shopId, req.query);
     (0, sendResponse_1.default)(res, {
@@ -71,6 +82,16 @@ const deleteProduct = (0, catchAsync_1.default)((req, res, next) => __awaiter(vo
         data: result,
     });
 }));
+const getFollowedShopProduct = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = req.user;
+    const result = yield product_services_1.ProductServices.getFollowedShopProduct(user, req.query);
+    (0, sendResponse_1.default)(res, {
+        statusCode: 200,
+        success: true,
+        message: 'jj',
+        data: result,
+    });
+}));
 exports.ProductController = {
     createProductIntoDb,
     updateProduct,
@@ -78,4 +99,6 @@ exports.ProductController = {
     getSingleProduct,
     getAllProduct,
     getProductByShopId,
+    incrementProductViewCOunt,
+    getFollowedShopProduct
 };

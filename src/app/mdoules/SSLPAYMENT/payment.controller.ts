@@ -23,18 +23,16 @@ const validatePayment = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
-
 const handleIPN = catchAsync(async (req, res) => {
+  console.log("fuckkdjfdkjf");
 
-    console.log('fuckkdjfdkjf');
-    
   const { val_id, tran_id, status } = req.body;
 
   if (!val_id) {
-    return res.status(400).json({ message: "val_id missing in IPN" });
+    res.status(400).json({ message: "val_id missing in IPN" });
+    return;
   }
 
-  // service এ পাঠানো হচ্ছে
   const result = await PaymentServicesSSL.validatePayment2({
     val_id,
     tran_id,

@@ -1,0 +1,109 @@
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MetaServices = void 0;
+const client_1 = require("@prisma/client");
+const prisma_1 = __importDefault(require("../../../utils/prisma"));
+const AppError_1 = __importDefault(require("../../error/AppError"));
+const fetchDashboardMetaData = (user) => __awaiter(void 0, void 0, void 0, function* () {
+    switch (user.role) {
+        case client_1.Role.admin:
+            return getAdminMetaData(user);
+            break;
+        case client_1.Role.vendor:
+            return getVendorMetaData(user);
+            break;
+        default:
+            throw new AppError_1.default(404, "invalid role");
+    }
+});
+const getAdminMetaData = (user) => __awaiter(void 0, void 0, void 0, function* () {
+    const vendorCount = yield prisma_1.default.user.count({
+        where: {
+            role: "vendor",
+        },
+    });
+    const userCount = yield prisma_1.default.user.count({});
+    const totalRevenu = yield prisma_1.default.order.aggregate({
+        _sum: {
+            totalAmount: true,
+        },
+    });
+    return {
+        vendorCount,
+        userCount,
+        totalRevenu,
+    };
+});
+const getVendorMetaData = (user) => __awaiter(void 0, void 0, void 0, function* () {
+    const orderCount = yield prisma_1.default.order.count({
+        where: {
+            shop: {
+                vendor: {
+                    email: user.email,
+                },
+            },
+        },
+    });
+    const totalRevenu = yield prisma_1.default.order.aggregate({
+        _sum: {
+            totalAmount: true,
+        },
+        where: {
+            shop: {
+                vendor: {
+                    email: user.email,
+                },
+            },
+        },
+    });
+    const totalReview = yield prisma_1.default.review.count({
+        where: {
+            product: {
+                shop: {
+                    vendor: {
+                        email: user.email,
+                    },
+                },
+            },
+        },
+    });
+    const productCount = yield prisma_1.default.product.count({
+        where: {
+            shop: {
+                vendor: {
+                    email: user.email,
+                },
+            },
+        },
+    });
+    //   console.log( {orderCount,totalRevenu,totalReview,productCount});
+    return { orderCount, totalRevenu, totalReview, productCount };
+});
+// const getUserMetaData = async (user: IAuthUser) => {
+//   const vendorCount = await prisma.user.count({
+//     where: {
+//       role: "vendor",
+//     },
+//   });
+//   const userCount = await prisma.user.count({});
+//   const totalRevenu = await prisma.order.aggregate({
+//     _sum: {
+//       totalAmount: true,
+//     },
+//   });
+// };
+exports.MetaServices = {
+    fetchDashboardMetaData,
+};

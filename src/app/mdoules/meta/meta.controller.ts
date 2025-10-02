@@ -6,21 +6,18 @@ import { IAuthUser } from "../../../interface/common";
 import AppError from "../../error/AppError";
 import { MetaServices } from "./meta.services";
 
-const getRoleMeta = catchAsync(async (req, res) => {
+const getRoleMeta = catchAsync(async (req: Request & { user: any }, res) => {
   const result = await MetaServices.fetchDashboardMetaData(req.user);
-  console.log(result,'iam result');
-  
-   sendResponse(res, {
+  console.log(result, "iam result");
+
+  sendResponse(res, {
     statusCode: 200,
     success: true,
     message: "Meta info retrieved in successful",
-    data:result
+    data: result,
   });
-  });
-
-
-
+});
 
 export const MetaController = {
-getRoleMeta
+  getRoleMeta,
 };

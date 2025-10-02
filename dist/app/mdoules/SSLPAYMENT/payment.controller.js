@@ -12,40 +12,50 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ReviewController = void 0;
+exports.PaymentControllerSSL = void 0;
 const catchAsync_1 = __importDefault(require("../../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../../utils/sendResponse"));
-const review_services_1 = require("./review.services");
-const addReview = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield review_services_1.ReviewServices.addReview(req.body);
+const payment_services_1 = require("./payment.services");
+const initPayment = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield payment_services_1.PaymentServicesSSL.initPayment(req.params.orderId);
     (0, sendResponse_1.default)(res, {
         statusCode: 200,
         success: true,
-        message: "Review created successfully",
+        message: "Orders retrieved successfully",
         data: result,
     });
 }));
-const getProductWithReview = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const { productId } = req.params; // Get productId from URL params
-    const product = yield review_services_1.ReviewServices.getReviewWithProductDetails(productId);
+const validatePayment = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield payment_services_1.PaymentServicesSSL.validatePayment(req.query);
     (0, sendResponse_1.default)(res, {
         statusCode: 200,
         success: true,
-        message: "Product details with reviews retrieved successfully",
-        data: product,
+        message: "Payment validation successful",
+        data: result,
     });
 }));
-const myReview = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const product = yield review_services_1.ReviewServices.getMyReview(req.user, req.query);
+const handleIPN = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("fuckkdjfdkjf");
+    const { val_id, tran_id, status } = req.body;
+    if (!val_id) {
+        res.status(400).json({ message: "val_id missing in IPN" });
+        return;
+    }
+    const result = yield payment_services_1.PaymentServicesSSL.validatePayment2({
+        val_id,
+        tran_id,
+        status,
+    });
+    // API response---
     (0, sendResponse_1.default)(res, {
         statusCode: 200,
         success: true,
-        message: "review fetched",
-        data: product,
+        message: "IPN received & validated",
+        data: result,
     });
 }));
-exports.ReviewController = {
-    addReview,
-    getProductWithReview,
-    myReview
+exports.PaymentControllerSSL = {
+    initPayment,
+    validatePayment,
+    handleIPN,
 };

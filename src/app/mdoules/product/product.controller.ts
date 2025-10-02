@@ -1,3 +1,4 @@
+import { IAuthUser } from "../../../interface/common";
 import catchAsync from "../../../utils/catchAsync";
 import sendResponse from "../../../utils/sendResponse";
 import { ProductServices } from "./product.services";
@@ -35,7 +36,7 @@ const getSingleProduct = catchAsync(async (req, res, next) => {
   });
 });
 const incrementProductViewCOunt = catchAsync(async (req, res, next) => {
-  const ip = req.ip;
+  const ip:any = req.ip;
   const userAgent = req.get("User-Agent") || "";
 
   const result = await ProductServices.increaseViewCount(
@@ -89,7 +90,7 @@ const deleteProduct = catchAsync(async (req, res, next) => {
 });
 
 const  getFollowedShopProduct=catchAsync(async(req,res,next)=>{
-  const user =req.user
+  const user =req.user as IAuthUser
   const result = await ProductServices.getFollowedShopProduct(user,req.query);
 
   sendResponse(res, {

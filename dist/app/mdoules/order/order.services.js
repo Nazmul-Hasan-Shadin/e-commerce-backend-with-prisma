@@ -17,24 +17,33 @@ const prisma_1 = __importDefault(require("../../../utils/prisma"));
 const createOrder = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const { shopId, customerId, totalAmount, orderItems } = payload;
     // Create the order and associated order items
-    const order = yield prisma_1.default.order.create({
-        data: {
-            shopId,
-            customerId,
-            totalAmount,
-            orderItems: {
-                create: orderItems.map((item) => ({
-                    productId: item.productId,
-                    quantity: item.quantity,
-                    price: item.price,
-                })),
+    return prisma_1.default.$transaction((tx) => __awaiter(void 0, void 0, void 0, function* () {
+        const order = yield tx.order.create({
+            data: {
+                shopId,
+                customerId,
+                totalAmount,
+                orderItems: {
+                    create: orderItems.map((item) => ({
+                        productId: item.productId,
+                        quantity: item.quantity,
+                        price: item.price,
+                    })),
+                },
             },
-        },
-        include: {
-            orderItems: true,
-        },
-    });
-    return order;
+            include: {
+                orderItems: true,
+            },
+        });
+        yield Promise.all(orderItems.map((order) => tx.product.update({
+            where: {
+                id: order.productId,
+            },
+            data: {
+                salesCount: { increment: 1 },
+            },
+        })));
+    }));
 });
 const getAllOrdersFromDB = (user) => __awaiter(void 0, void 0, void 0, function* () {
     let result;

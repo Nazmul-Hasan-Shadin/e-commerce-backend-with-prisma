@@ -36,7 +36,42 @@ const getReviewWithProductDetails = (id) => __awaiter(void 0, void 0, void 0, fu
     });
     return result;
 });
+const getMyReview = (userInfo, options) => __awaiter(void 0, void 0, void 0, function* () {
+    let page = Number(options.page) || 1;
+    let limit = Number(options.limit) || 4;
+    let skip = (page - 1) * limit;
+    const user = yield prisma_1.default.user.findUniqueOrThrow({
+        where: {
+            email: userInfo.email,
+        },
+    });
+    const result = yield prisma_1.default.review.findMany({
+        where: {
+            userId: user.id,
+        },
+        include: {
+            product: true,
+        },
+        skip: skip,
+        take: limit,
+    });
+    const total = yield prisma_1.default.review.count({
+        where: {
+            userId: user.id,
+        }
+    });
+    return {
+        meta: {
+            total,
+            limit,
+            page,
+            totalPages: Math.ceil(total / limit),
+        },
+        data: result
+    };
+});
 exports.ReviewServices = {
     addReview,
     getReviewWithProductDetails,
+    getMyReview,
 };
