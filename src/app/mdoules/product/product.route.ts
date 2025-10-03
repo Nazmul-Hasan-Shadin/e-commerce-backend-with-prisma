@@ -22,8 +22,8 @@ router.post("/:id/view", ProductController.incrementProductViewCOunt);
 
 router.get("/user/following/products",auth(Role.user), ProductController.getFollowedShopProduct);
 
-router.patch("/:id", ProductController.updateProduct);
-router.delete("/:id", ProductController.deleteProduct);
+router.patch("/:id", auth(Role.admin,Role.vendor),ProductController.updateProduct);
+router.delete("/:id", auth(Role.admin,Role.vendor),ProductController.deleteProduct);
 
 
 

@@ -3,6 +3,20 @@ import sendResponse from "../../../utils/sendResponse";
 import { AuthServices } from "../Auth/auth.services";
 import { shopServices } from "./shop.services";
 
+
+
+
+const getAllShop = catchAsync(async (req, res) => {
+  const result = await shopServices.getAllShop(req.query,req.query);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "shop are retrieve successful",
+    data: result,
+  });
+});
+
 const createShop = catchAsync(async (req, res) => {
   const result = await shopServices.createShop(req);
 
@@ -38,4 +52,5 @@ export const ShopController = {
   createShop,
   shopById,
   getTopTenShop,
+  getAllShop
 };

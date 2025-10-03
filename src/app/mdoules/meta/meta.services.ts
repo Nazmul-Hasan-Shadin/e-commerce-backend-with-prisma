@@ -19,10 +19,15 @@ const fetchDashboardMetaData = async (user: IAuthUser) => {
 const getAdminMetaData = async (user: IAuthUser) => {
   const vendorCount = await prisma.user.count({
     where: {
-      role: "vendor",
+      role: "admin",
     },
   });
   const userCount = await prisma.user.count({});
+    const adminCount = await prisma.user.count({
+      where:{
+        role:Role.admin
+      }
+    });
   const totalRevenu = await prisma.order.aggregate({
     _sum: {
       totalAmount: true,
@@ -31,7 +36,8 @@ const getAdminMetaData = async (user: IAuthUser) => {
   return {
     vendorCount,
     userCount,
-    totalRevenu,
+    totalRevenu:totalRevenu?._sum?.totalAmount,
+    adminCount
   };
 };
 
@@ -99,6 +105,18 @@ const getVendorMetaData = async (user: IAuthUser) => {
 //     },
 //   });
 // };
+
+
+const getBarChartData=async()=>{
+     const saleCountByMonth:{month:Date}=await prisma.$queryRaw`
+     SELECT DATE_TRUNC('month','createdAt') AS month;
+     COUNT(*) AS count,
+     FROM "order"
+     GROUP BY month
+     ORDER BY month ASC
+     `
+}
+
 
 export const MetaServices = {
   fetchDashboardMetaData,

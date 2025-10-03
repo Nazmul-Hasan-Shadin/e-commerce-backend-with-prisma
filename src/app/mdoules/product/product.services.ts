@@ -106,6 +106,11 @@ const getAllProduct = async (filters: any, options: any) => {
     where: whereCondition,
     include: {
       category: true,
+      shop:{
+        select:{
+          name:true
+        }
+      }
     },
     skip: (page - 1) * limit,
     orderBy:

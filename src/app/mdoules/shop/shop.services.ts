@@ -1,4 +1,4 @@
-import { Shop } from "@prisma/client";
+import { Prisma, Shop } from "@prisma/client";
 import prisma from "../../../utils/prisma";
 import { Request } from "express";
 
@@ -18,10 +18,70 @@ const createShop = async (req: Request) => {
 
 const getTopTenShop = async () => {
   const result = await prisma.shop.findMany({
-       include:{
-         product:true
-       }
+    include: {
+      product: true,
+    },
   });
+  return result;
+};
+
+const getAllShop = async (
+  filterQuery: Record<string, any>,
+  options: Record<string, any>
+) => {
+  const { searchTerm, ...othersFilter } = filterQuery;
+
+  const andCondition: Prisma.ShopWhereInput[] = [];
+
+  if (searchTerm) {
+    andCondition.push({
+      OR: ["name", "description"].map((field) => ({
+        [field]: {
+          contains: searchTerm,
+          mode: "insensitive",
+        },
+      })),
+    });
+  }
+
+  const filteredQuery = othersFilter;
+
+  const excludePaginationParameterFromQuery = [
+    "limit",
+    "page",
+    "orderBy",
+    "sortBy",
+  ];
+  for (const key of excludePaginationParameterFromQuery) {
+    delete filterQuery[key];
+  }
+
+  if (Object.keys(filteredQuery).length > 0) {
+    const filterCondition = Object.keys(filterQuery).map((key) => ({
+      [key]: {
+        contains: filterQuery[key],
+      },
+    }));
+
+    andCondition.push(...filterCondition);
+  }
+
+  const filteredWhereCondition =
+    andCondition.length > 0 ? { AND: andCondition } : {};
+
+  let limit = filterQuery?.limit || 7;
+  let page = filterQuery?.page || 1;
+  let skip = (page - 1) * limit;
+
+  const result = await prisma.shop.findMany({
+    include: {
+      product: true,
+    },
+    where: filteredWhereCondition,
+    skip:skip,
+    orderBy: filterQuery.sortBy && filterQuery?.orderBy ? {[filterQuery.orderBy]:filterQuery.sortBy}:{createdAt:'asc'}
+  });
+
   return result;
 };
 
@@ -40,4 +100,5 @@ export const shopServices = {
   createShop,
   getShopById,
   getTopTenShop,
+  getAllShop,
 };
