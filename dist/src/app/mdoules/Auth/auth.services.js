@@ -25,7 +25,7 @@ const loginUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const userData = yield prisma_1.default.user.findUniqueOrThrow({
         where: {
             email: payload.email,
-            status: client_1.UserStatus.active,
+            status: client_1.UserStatus.ACTIVE,
         },
     });
     if (!userData) {
@@ -46,7 +46,7 @@ const changePassword = (user, payload) => __awaiter(void 0, void 0, void 0, func
     const userData = yield prisma_1.default.user.findUniqueOrThrow({
         where: {
             email: user.email,
-            status: client_1.UserStatus.active,
+            status: client_1.UserStatus.ACTIVE,
         },
     });
     const isCorrectPassword = yield bcrypt_1.default.compare(payload.oldPassword, userData.password);

@@ -12,49 +12,50 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ShopController = void 0;
+exports.PaymentControllerSSL = void 0;
 const catchAsync_1 = __importDefault(require("../../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../../utils/sendResponse"));
-const shop_services_1 = require("./shop.services");
-const getAllShop = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield shop_services_1.shopServices.getAllShop(req.query, req.query);
+const payment_services_1 = require("./payment.services");
+const initPayment = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield payment_services_1.PaymentServicesSSL.initPayment(req.params.orderId);
     (0, sendResponse_1.default)(res, {
         statusCode: 200,
         success: true,
-        message: "shop are retrieve successful",
+        message: "Orders retrieved successfully",
         data: result,
     });
 }));
-const createShop = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield shop_services_1.shopServices.createShop(req);
+const validatePayment = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield payment_services_1.PaymentServicesSSL.validatePayment(req.query);
     (0, sendResponse_1.default)(res, {
         statusCode: 200,
         success: true,
-        message: "shop is created succesful",
+        message: "Payment validation successful",
         data: result,
     });
 }));
-const shopById = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield shop_services_1.shopServices.getShopById(req.params.id);
+const handleIPN = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("fuckkdjfdkjf");
+    const { val_id, tran_id, status } = req.body;
+    if (!val_id) {
+        res.status(400).json({ message: "val_id missing in IPN" });
+        return;
+    }
+    const result = yield payment_services_1.PaymentServicesSSL.validatePayment2({
+        val_id,
+        tran_id,
+        status,
+    });
+    // API response---
     (0, sendResponse_1.default)(res, {
         statusCode: 200,
         success: true,
-        message: "shop is retrived succesful",
+        message: "IPN received & validated",
         data: result,
     });
 }));
-const getTopTenShop = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield shop_services_1.shopServices.getTopTenShop();
-    (0, sendResponse_1.default)(res, {
-        statusCode: 200,
-        success: true,
-        message: "shop are retrived succesful",
-        data: result,
-    });
-}));
-exports.ShopController = {
-    createShop,
-    shopById,
-    getTopTenShop,
-    getAllShop
+exports.PaymentControllerSSL = {
+    initPayment,
+    validatePayment,
+    handleIPN,
 };

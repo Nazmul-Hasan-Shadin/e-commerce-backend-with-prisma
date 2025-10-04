@@ -11,7 +11,7 @@ const loginUser = async (payload: { email: string; password: string }) => {
   const userData = await prisma.user.findUniqueOrThrow({
     where: {
       email: payload.email,
-      status: UserStatus.active,
+      status: UserStatus.ACTIVE,
     },
   });
   if (!userData) {
@@ -49,7 +49,7 @@ const changePassword = async (user: any, payload: any) => {
   const userData = await prisma.user.findUniqueOrThrow({
     where: {
       email: user.email,
-      status: UserStatus.active,
+      status: UserStatus.ACTIVE,
     },
   });
 

@@ -12,49 +12,60 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ShopController = void 0;
+exports.AuthController = void 0;
 const catchAsync_1 = __importDefault(require("../../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../../utils/sendResponse"));
-const shop_services_1 = require("./shop.services");
-const getAllShop = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield shop_services_1.shopServices.getAllShop(req.query, req.query);
+const auth_services_1 = require("./auth.services");
+const loginUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield auth_services_1.AuthServices.loginUser(req.body);
+    const { refreshtoken } = result;
+    res.cookie("refreshToken", refreshtoken, {
+        secure: false,
+        httpOnly: true,
+        // domain: "e-commerce-inky-alpha.vercel.app",
+        // path: "/",
+    });
     (0, sendResponse_1.default)(res, {
         statusCode: 200,
         success: true,
-        message: "shop are retrieve successful",
-        data: result,
+        message: "logged in successful",
+        data: {
+            accessToken: result.accessToken,
+        },
     });
 }));
-const createShop = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield shop_services_1.shopServices.createShop(req);
+const changePassword = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = req.user;
+    const result = yield auth_services_1.AuthServices.changePassword(user, req.body);
     (0, sendResponse_1.default)(res, {
         statusCode: 200,
         success: true,
-        message: "shop is created succesful",
+        message: "password change successful",
         data: result,
     });
 }));
-const shopById = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield shop_services_1.shopServices.getShopById(req.params.id);
+const forgetPassword = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield auth_services_1.AuthServices.forgetPassword(req.body.email);
     (0, sendResponse_1.default)(res, {
         statusCode: 200,
         success: true,
-        message: "shop is retrived succesful",
+        message: "Reset token is retrieved successfully",
         data: result,
     });
 }));
-const getTopTenShop = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield shop_services_1.shopServices.getTopTenShop();
+const resetPassword = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const token = req.query.token;
+    const result = yield auth_services_1.AuthServices.resetPassword(req.body, token);
     (0, sendResponse_1.default)(res, {
         statusCode: 200,
         success: true,
-        message: "shop are retrived succesful",
+        message: "Password reset successfully",
         data: result,
     });
 }));
-exports.ShopController = {
-    createShop,
-    shopById,
-    getTopTenShop,
-    getAllShop
+exports.AuthController = {
+    loginUser,
+    changePassword,
+    forgetPassword,
+    resetPassword,
 };

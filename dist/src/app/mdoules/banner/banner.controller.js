@@ -12,49 +12,49 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ShopController = void 0;
+exports.BannerController = exports.updateBannerIntoDb = exports.getBannerFromDb = exports.createBanner = void 0;
 const catchAsync_1 = __importDefault(require("../../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../../utils/sendResponse"));
-const shop_services_1 = require("./shop.services");
-const getAllShop = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield shop_services_1.shopServices.getAllShop(req.query, req.query);
+const banner_services_1 = require("./banner.services");
+exports.createBanner = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    if (req.file) {
+        const path = req.file.path;
+        req.body.data = JSON.parse(req.body.data);
+        req.body.data.image = path;
+    }
+    const result = yield banner_services_1.BannerServices.createBannerIntoDb(req.body.data);
     (0, sendResponse_1.default)(res, {
         statusCode: 200,
         success: true,
-        message: "shop are retrieve successful",
+        message: "Banner created successful",
         data: result,
     });
 }));
-const createShop = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield shop_services_1.shopServices.createShop(req);
+exports.getBannerFromDb = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield banner_services_1.BannerServices.getBannerFromDb();
     (0, sendResponse_1.default)(res, {
         statusCode: 200,
         success: true,
-        message: "shop is created succesful",
+        message: "Banner retrieved successful",
         data: result,
     });
 }));
-const shopById = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield shop_services_1.shopServices.getShopById(req.params.id);
+exports.updateBannerIntoDb = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    if (req.file) {
+        const path = req.file.path;
+        req.body.data = JSON.parse(req.body.data);
+        req.body.data.image = path;
+    }
+    const result = yield banner_services_1.BannerServices.updateBannerIntoDb(req.body.data);
     (0, sendResponse_1.default)(res, {
         statusCode: 200,
         success: true,
-        message: "shop is retrived succesful",
+        message: "Banner created successful",
         data: result,
     });
 }));
-const getTopTenShop = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield shop_services_1.shopServices.getTopTenShop();
-    (0, sendResponse_1.default)(res, {
-        statusCode: 200,
-        success: true,
-        message: "shop are retrived succesful",
-        data: result,
-    });
-}));
-exports.ShopController = {
-    createShop,
-    shopById,
-    getTopTenShop,
-    getAllShop
+exports.BannerController = {
+    createBanner: exports.createBanner,
+    getBannerFromDb: exports.getBannerFromDb,
+    updateBannerIntoDb: exports.updateBannerIntoDb
 };

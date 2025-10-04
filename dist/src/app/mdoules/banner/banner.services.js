@@ -12,36 +12,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserServices = void 0;
+exports.BannerServices = void 0;
 const prisma_1 = __importDefault(require("../../../utils/prisma"));
-const bcrypt_1 = __importDefault(require("bcrypt"));
-const createUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(payload, 'load');
-    const hashedPassword = yield bcrypt_1.default.hash(payload.password, 12);
-    const result = prisma_1.default.user.create({
-        data: Object.assign(Object.assign({}, payload), { password: hashedPassword }),
+const createBannerIntoDb = (bannerInfo) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield prisma_1.default.banner.create({
+        data: bannerInfo,
     });
     return result;
 });
-const getUserByEmail = (userInfo) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield prisma_1.default.user.findUnique({
+const getBannerFromDb = () => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield prisma_1.default.banner.findMany({});
+    return result;
+});
+const updateBannerIntoDb = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield prisma_1.default.banner.update({
         where: {
-            email: userInfo.email,
+            id: payload.id,
         },
-        include: {
-            Order: true,
-            shop: true,
-            shopFollower: true,
-        },
+        data: payload,
     });
-    return user;
+    return result;
 });
-const getAllUser = () => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield prisma_1.default.user.findMany({});
-    return user;
-});
-exports.UserServices = {
-    createUser,
-    getUserByEmail,
-    getAllUser,
+exports.BannerServices = {
+    createBannerIntoDb,
+    getBannerFromDb,
+    updateBannerIntoDb
 };

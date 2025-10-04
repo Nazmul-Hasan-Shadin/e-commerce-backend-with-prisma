@@ -12,49 +12,39 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ShopController = void 0;
+exports.UserController = void 0;
 const catchAsync_1 = __importDefault(require("../../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../../utils/sendResponse"));
-const shop_services_1 = require("./shop.services");
-const getAllShop = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield shop_services_1.shopServices.getAllShop(req.query, req.query);
+const user_services_1 = require("./user.services");
+const createUserIntoDb = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield user_services_1.UserServices.createUser(req.body);
     (0, sendResponse_1.default)(res, {
         statusCode: 200,
         success: true,
-        message: "shop are retrieve successful",
+        message: "users are created succesful",
         data: result,
     });
 }));
-const createShop = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield shop_services_1.shopServices.createShop(req);
+const getCurrentUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield user_services_1.UserServices.getUserByEmail(req.user);
     (0, sendResponse_1.default)(res, {
         statusCode: 200,
         success: true,
-        message: "shop is created succesful",
+        message: "users is fetched succesful",
         data: result,
     });
 }));
-const shopById = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield shop_services_1.shopServices.getShopById(req.params.id);
+const getallUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield user_services_1.UserServices.getAllUser();
     (0, sendResponse_1.default)(res, {
         statusCode: 200,
         success: true,
-        message: "shop is retrived succesful",
+        message: "users are fetched succesful",
         data: result,
     });
 }));
-const getTopTenShop = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield shop_services_1.shopServices.getTopTenShop();
-    (0, sendResponse_1.default)(res, {
-        statusCode: 200,
-        success: true,
-        message: "shop are retrived succesful",
-        data: result,
-    });
-}));
-exports.ShopController = {
-    createShop,
-    shopById,
-    getTopTenShop,
-    getAllShop
+exports.UserController = {
+    createUserIntoDb,
+    getCurrentUser,
+    getallUser,
 };

@@ -12,49 +12,40 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ShopController = void 0;
+exports.ReviewController = void 0;
 const catchAsync_1 = __importDefault(require("../../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../../utils/sendResponse"));
-const shop_services_1 = require("./shop.services");
-const getAllShop = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield shop_services_1.shopServices.getAllShop(req.query, req.query);
+const review_services_1 = require("./review.services");
+const addReview = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield review_services_1.ReviewServices.addReview(req.body);
     (0, sendResponse_1.default)(res, {
         statusCode: 200,
         success: true,
-        message: "shop are retrieve successful",
+        message: "Review created successfully",
         data: result,
     });
 }));
-const createShop = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield shop_services_1.shopServices.createShop(req);
+const getProductWithReview = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { productId } = req.params; // Get productId from URL params
+    const product = yield review_services_1.ReviewServices.getReviewWithProductDetails(productId);
     (0, sendResponse_1.default)(res, {
         statusCode: 200,
         success: true,
-        message: "shop is created succesful",
-        data: result,
+        message: "Product details with reviews retrieved successfully",
+        data: product,
     });
 }));
-const shopById = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield shop_services_1.shopServices.getShopById(req.params.id);
+const myReview = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const product = yield review_services_1.ReviewServices.getMyReview(req.user, req.query);
     (0, sendResponse_1.default)(res, {
         statusCode: 200,
         success: true,
-        message: "shop is retrived succesful",
-        data: result,
+        message: "review fetched",
+        data: product,
     });
 }));
-const getTopTenShop = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield shop_services_1.shopServices.getTopTenShop();
-    (0, sendResponse_1.default)(res, {
-        statusCode: 200,
-        success: true,
-        message: "shop are retrived succesful",
-        data: result,
-    });
-}));
-exports.ShopController = {
-    createShop,
-    shopById,
-    getTopTenShop,
-    getAllShop
+exports.ReviewController = {
+    addReview,
+    getProductWithReview,
+    myReview
 };

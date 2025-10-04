@@ -93,7 +93,7 @@ const getVendorMetaData = async (user: IAuthUser) => {
 
   //   console.log( {orderCount,totalRevenu,totalReview,productCount});
 
-  return { orderCount, totalRevenu, totalReview, productCount };
+  return { orderCount,  totalRevenu:totalRevenu?._sum?.totalAmount, totalReview, productCount };
 };
 
 // const getUserMetaData = async (user: IAuthUser) => {
