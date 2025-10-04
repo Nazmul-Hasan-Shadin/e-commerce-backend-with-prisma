@@ -1,5 +1,6 @@
 import { Role } from "@prisma/client";
 import prisma from "../src/utils/prisma";
+import AppError from "../src/app/error/AppError";
 
 const seedSuperAdmin = async () => {
   try {
@@ -8,6 +9,9 @@ const seedSuperAdmin = async () => {
         role: Role.admin,
       },
     });
+    if (isExistSuperAdmin) {
+        throw new AppError(500,'admin exist')
+    }
     const superAdminData = await prisma.user.create({
       data: {
         email: "super@admin.com",

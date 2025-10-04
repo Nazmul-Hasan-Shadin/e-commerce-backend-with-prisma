@@ -19,10 +19,14 @@ const fetchDashboardMetaData = async (user: IAuthUser) => {
 const getAdminMetaData = async (user: IAuthUser) => {
   const vendorCount = await prisma.user.count({
     where: {
-      role: "admin",
+      role:Role.vendor,
     },
   });
-  const userCount = await prisma.user.count({});
+  const userCount = await prisma.user.count({
+    where:{
+      role:Role.user
+    }
+  });
     const adminCount = await prisma.user.count({
       where:{
         role:Role.admin

@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -6,17 +5,18 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  // directUrl = env("DIRECT_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
-  id          String        @id @unique @default(uuid())
-  username    String        @unique
-  email       String        @unique
-  password    String
-  role        Role          @default(user)
-  extra       String?
-  status      UserStatus    @default(active)
+  id       String  @id @unique @default(uuid())
+  username String  @unique
+  email    String  @unique
+  password String
+  role     Role    @default(user)
+  extra    String?
+
+  status      UserStatus    @default(ACTIVE)
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   Order       Order[]
@@ -54,6 +54,7 @@ model Shop {
   product      Product[]
   Order        Order[]
   shopFollower ShopFollower[]
+  status       ShopStatus     @default(ACTIVE)
 }
 
 model Product {
@@ -112,12 +113,12 @@ model Order {
   shop        Shop          @relation(fields: [shopId], references: [id])
   customerId  String
   customer    User          @relation(fields: [customerId], references: [id])
-  status      PaymentStatus @default(pending)
+  status      PaymentStatus @default(PENDING)
   totalAmount Float
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   orderItems  OrderItem[]
-  
+
   @@map("orders")
 }
 
@@ -171,16 +172,22 @@ enum Role {
   admin
   vendor
   user
-  test
+  superadmin
 }
 
 enum UserStatus {
-  block
-  active
+  ACTIVE
+  BLOCK
+}
+
+enum ShopStatus {
+  ACTIVE
+  INACTIVE
+  PENDING
 }
 
 enum PaymentStatus {
-  pending
-  completed
-  failed
+  PENDING
+  COMPLETE
+  FAILED
 }

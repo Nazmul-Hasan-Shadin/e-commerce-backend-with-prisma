@@ -31,6 +31,7 @@ const getAllProduct = async (filters: any, options: any) => {
       },
     });
   }
+console.log(searchTerm,'searchterm');
 
   const andCondition: Prisma.ProductWhereInput[] = [];
   if (searchTerm) {
@@ -54,6 +55,7 @@ const getAllProduct = async (filters: any, options: any) => {
     "orderBy",
     "sortBy",
     "categoryName",
+    "searchTerm",
     "brandFilter",
     "isFlash",
   ];

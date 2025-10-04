@@ -44,7 +44,7 @@ const getAllShop = async (
     });
   }
 
-  const filteredQuery = othersFilter;
+  const filteredQuery = {...othersFilter};
 
   const excludePaginationParameterFromQuery = [
     "limit",
@@ -53,7 +53,7 @@ const getAllShop = async (
     "sortBy",
   ];
   for (const key of excludePaginationParameterFromQuery) {
-    delete filterQuery[key];
+    delete filteredQuery[key];
   }
 
   if (Object.keys(filteredQuery).length > 0) {
@@ -68,17 +68,25 @@ const getAllShop = async (
 
   const filteredWhereCondition =
     andCondition.length > 0 ? { AND: andCondition } : {};
-
-  let limit = filterQuery?.limit || 7;
-  let page = filterQuery?.page || 1;
+     console.log(filterQuery?.limit,'k');
+     
+  let limit = Number(filterQuery.limit) || 12;
+  let page = Number(filterQuery.page) || 1;
   let skip = (page - 1) * limit;
 
   const result = await prisma.shop.findMany({
     include: {
-      product: true,
+       _count:{
+        select:{
+          product:true,
+          Order:true,
+          shopFollower:true
+        }
+       }
     },
     where: filteredWhereCondition,
     skip:skip,
+    take:limit,
     orderBy: filterQuery.sortBy && filterQuery?.orderBy ? {[filterQuery.orderBy]:filterQuery.sortBy}:{createdAt:'asc'}
   });
 
