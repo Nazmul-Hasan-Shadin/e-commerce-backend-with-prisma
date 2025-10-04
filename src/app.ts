@@ -7,7 +7,7 @@ const app: Application = express();
 
 app.use(
   cors({
-    origin: ['https://independent-mart.vercel.app','http://localhost:3000','http:/192.168.0.102:3000'],
+    origin: ['https://independent-mart.vercel.app','http://localhost:3000'],
     credentials: true,
   })
 );
