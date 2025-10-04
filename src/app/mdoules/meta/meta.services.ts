@@ -111,15 +111,15 @@ const getVendorMetaData = async (user: IAuthUser) => {
 // };
 
 
-const getBarChartData=async()=>{
-     const saleCountByMonth:{month:Date}=await prisma.$queryRaw`
-     SELECT DATE_TRUNC('month','createdAt') AS month;
-     COUNT(*) AS count,
-     FROM "order"
-     GROUP BY month
-     ORDER BY month ASC
-     `
-}
+// const getBarChartData=async()=>{
+//      const saleCountByMonth:{month:Date}=await prisma.$queryRaw`
+//      SELECT DATE_TRUNC('month','createdAt') AS month;
+//      COUNT(*) AS count,
+//      FROM "order"
+//      GROUP BY month
+//      ORDER BY month ASC
+//      `
+// }
 
 
 export const MetaServices = {
