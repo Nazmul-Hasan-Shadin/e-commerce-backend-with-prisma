@@ -1,3 +1,4 @@
+
 import { Prisma, Shop } from "@prisma/client";
 import prisma from "../../../utils/prisma";
 import { Request } from "express";
@@ -29,8 +30,14 @@ const getAllShop = async (
   filterQuery: Record<string, any>,
   options: Record<string, any>
 ) => {
-  const { searchTerm, ...othersFilter } = filterQuery;
 
+  console.log('iam hit');
+  
+  const { searchTerm, ...othersFilter } = filterQuery;
+    console.log(othersFilter,'otherFileters');
+    console.log(filterQuery,'filterquery');
+    
+    
   const andCondition: Prisma.ShopWhereInput[] = [];
 
   if (searchTerm) {
@@ -44,12 +51,13 @@ const getAllShop = async (
     });
   }
 
-  const filteredQuery = {...othersFilter};
+  const filteredQuery = {...options};
 
   const excludePaginationParameterFromQuery = [
     "limit",
     "page",
     "orderBy",
+    'searchTerm',
     "sortBy",
   ];
   for (const key of excludePaginationParameterFromQuery) {
@@ -90,7 +98,17 @@ const getAllShop = async (
     orderBy: filterQuery.sortBy && filterQuery?.orderBy ? {[filterQuery.orderBy]:filterQuery.sortBy}:{createdAt:'asc'}
   });
 
-  return result;
+    const total = await prisma.product.count({ where: filteredWhereCondition });
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    data: result,
+  };
+
+
 };
 
 const getShopById = async (shopId: string) => {

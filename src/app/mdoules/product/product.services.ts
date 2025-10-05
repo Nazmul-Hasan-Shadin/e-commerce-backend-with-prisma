@@ -16,7 +16,6 @@ const getAllProduct = async (filters: any, options: any) => {
   const { searchTerm, brandFilter, isFlash, categoryName, ...filterData } =
     filters;
   //categoryName dea dropdown dea direct search kora jai
- 
 
   let brandFilterByArray = [];
   if (brandFilter) {
@@ -31,7 +30,7 @@ const getAllProduct = async (filters: any, options: any) => {
       },
     });
   }
-console.log(searchTerm,'searchterm');
+  console.log(searchTerm, "searchterm");
 
   const andCondition: Prisma.ProductWhereInput[] = [];
   if (searchTerm) {
@@ -108,11 +107,11 @@ console.log(searchTerm,'searchterm');
     where: whereCondition,
     include: {
       category: true,
-      shop:{
-        select:{
-          name:true
-        }
-      }
+      shop: {
+        select: {
+          name: true,
+        },
+      },
     },
     skip: (page - 1) * limit,
     orderBy:
@@ -155,21 +154,43 @@ const getProductByShopId = async (
   shopId: string,
   filterQuery: Record<string, unknown>
 ) => {
+  const { searchTerm } = filterQuery;
+  const andCondition = [];
+ 
+  
+
+  if (searchTerm) {
+    andCondition.push({
+      OR: ["name", "description"].map((field) => {
+        return {
+          [field]: {
+            contains: searchTerm,
+            mode: "insensitive"
+          },
+        };
+      }),
+    });
+  }
+  andCondition.push({
+    shopId: shopId,
+  });
+
+  const filterdwhereCondition = andCondition.length
+    ? { AND: andCondition }
+    : {};
+
   const limit = Number(filterQuery.limit) || 16;
   const page = Number(filterQuery.page) || 1;
-console.log(limit, page);
+  console.log(limit, page);
 
   const result = await prisma.product.findMany({
-    where: { shopId: shopId },
+    where: filterdwhereCondition,
     skip: (page - 1) * limit,
     take: limit,
   });
 
-
   const total = await prisma.product.count({
-    where: {
-      shopId,
-    },
+    where: filterdwhereCondition,
   });
   return {
     meta: {
@@ -208,8 +229,6 @@ const increaseViewCount = async (
     where: { id: productId },
   });
 
-
-
   if (!productExists) {
     throw new Error("Product not found");
   }
@@ -242,8 +261,6 @@ const increaseViewCount = async (
         where: { id: productId },
         data: { viewCount: { increment: 1 } },
       });
-
-   
     }
 
     if (ip && userAgent) {
@@ -281,8 +298,6 @@ const increaseViewCount = async (
     }
     return;
   }
-
-
 
   await prisma.product.update({
     where: {
@@ -328,8 +343,6 @@ const getFollowedShopProduct = async (
   userData: IAuthUser,
   filterQuery: Record<string, unknown>
 ) => {
-
-
   const { searchTerm, ...filtersData } = filterQuery;
   const userFollowedShop = await prisma.user.findFirstOrThrow({
     where: {
