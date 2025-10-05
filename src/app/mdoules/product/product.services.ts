@@ -157,12 +157,15 @@ const getProductByShopId = async (
 ) => {
   const limit = Number(filterQuery.limit) || 16;
   const page = Number(filterQuery.page) || 1;
+console.log(limit, page);
 
   const result = await prisma.product.findMany({
     where: { shopId: shopId },
-    skip: (page - 1) / limit,
+    skip: (page - 1) * limit,
     take: limit,
   });
+
+
   const total = await prisma.product.count({
     where: {
       shopId,
