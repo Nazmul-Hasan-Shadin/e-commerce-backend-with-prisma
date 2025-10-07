@@ -6,11 +6,11 @@ const initPayment = async (orderId: string) => {
   const data = {
     total_amount: 100,
     currency: "BDT",
-    tran_id: "REF123", // use unique tran_id for each api call
+    tran_id: "REF1233", // use unique tran_id for each api call
     success_url: "https://independent-mart.vercel.app/success-payment",
     fail_url: "http://localhost:3030/fail",
     cancel_url: "http://localhost:3030/cancel",
-    ipn_url: "http://localhost:3030/ipn",
+    ipn_url: "https://independent-shop.vercel.app/api/v1/payment/ipn",
     shipping_method: "Courier",
     product_name: "Computer.",
     product_category: "Electronic",
