@@ -7,7 +7,7 @@ const initPayment = async (orderId: string) => {
     total_amount: 100,
     currency: "BDT",
     tran_id: "REF123", // use unique tran_id for each api call
-    success_url: "http://localhost:3000/success-payment",
+    success_url: "https://independent-mart.vercel.app/success-payment",
     fail_url: "http://localhost:3030/fail",
     cancel_url: "http://localhost:3030/cancel",
     ipn_url: "http://localhost:3030/ipn",
@@ -70,7 +70,7 @@ const validatePayment = async (payload: any) => {
 
 const validatePayment2 = async (payload: { val_id: string; tran_id?: string; status?: string }) => {
   try {
-    const { val_id } = payload;
+    const { val_id } = payload;payload
 
     // SSLCommerz Validation API (sandbox/prod অনুযায়ী base URL সেট করিস)
     const response = await axios.get(
